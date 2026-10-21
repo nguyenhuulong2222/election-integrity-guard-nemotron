@@ -5,7 +5,8 @@
 #   secure     GitLab SAST + Secret Detection (templates, all tiers)
 #   package    site bundle + SHA-256 manifest
 #   release    GitLab Pages deploy from main: a human must press "Run" (supervised)
-#   monitor    scheduled drift check of the live site against main
+#   monitor    scheduled drift check of the live site against main (every scheduled pipeline;
+#              no pipeline variables, because Developers may not set them in this project)
 #
 # The GitLab Duo flow starts from a "Pipeline events" trigger when an MR pipeline finishes,
 # then reads the integrity job's report (artifact + job log). The agent never deploys.
@@ -25,8 +26,8 @@ variables:
 
 workflow:
   rules:
-    # Scheduled (or manually started) monitor pipelines run only the monitor job.
-    - if: $EIG_JOB == "monitor"
+    # Scheduled pipelines are monitor pipelines and run only the monitor job.
+    - if: $CI_PIPELINE_SOURCE == "schedule"
       variables:
         SAST_DISABLED: "true"
         SECRET_DETECTION_DISABLED: "true"
@@ -50,7 +51,7 @@ sast:
 .python:
   image: $PYTHON_IMAGE
   rules:
-    - if: $EIG_JOB == "monitor"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
     - when: on_success
 
@@ -104,7 +105,7 @@ release-pages:
     name: production
     url: $CI_PAGES_URL
   rules:
-    - if: $EIG_JOB == "monitor"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
     # Supervised release: only from main, and only when a person presses "Run" on this job.
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"
@@ -118,7 +119,7 @@ monitor:
     GIT_DEPTH: "0"  # the deployed commit must be found in main's history
     EIG_SITE_URL: "https://showcase-0b6166.gitlab.io"  # live Pages site (same as $CI_PAGES_URL)
   rules:
-    - if: $EIG_JOB == "monitor" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
+    - if: $CI_PIPELINE_SOURCE == "schedule"
   script:
     - 'if [ "${CI_PAGES_URL%/}" != "${EIG_SITE_URL%/}" ]; then echo "warning: CI_PAGES_URL ($CI_PAGES_URL) differs from EIG_SITE_URL ($EIG_SITE_URL)"; fi'
     # Opens an incident issue if EIG_BOT_TOKEN is set; always fails the job on drift.
