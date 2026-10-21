@@ -66,4 +66,4 @@ Some protections can only be set in the GitLab UI. Each item says which phase ne
   - Pipeline events: Passed, Failed
   - Mention
 - [ ] **Create the custom agent** "Integrity Advisor" (AI > Agents > New agent) from `.gitlab/duo/agents/integrity-advisor.md`.
-- [x] **Pipeline schedule** "integrity monitor" (ID 4504749, `*/30 * * * *`, `main`, no variables). Created with the API on 2026-10-21. The first run, pipeline #2973392233, was green. **(blocked: needs Maintainer)**
+- [x] **Pipeline schedule** "integrity monitor" (ID 4504749, `*/30 * * * *`, `main`, no variables). Created with the API on 2026-10-21. The first run, pipeline #2973392233, was green. _(Developer can do this.)_

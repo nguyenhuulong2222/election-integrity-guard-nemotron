@@ -111,7 +111,12 @@ glab api projects/87857590/members/all/43545862
 
 **Plan B, if Maintainer isn't granted:**
 1. Build and publish the flow from a personal project where the user is Owner, as a **Public** AI Catalog item. Enabling and triggering it in the showcase project still needs a Maintainer, so this only partly helps.
-2. Run the flow from the VS Code GitLab flow builder (Developer can run), and record that for the demo.
+2. Run the flow from the VS Code GitLab flow builder, and record that for the demo.
+   - **Confirmed from the docs (2026-10-21):** a Developer can **Run** a flow there, but can't publish it, enable it or attach triggers.
+   - **Needs:** extension ≥ 6.87.0, `gitlab.featureFlags.flowBuilder: true`, and the Agent Platform on for the project (API: `duo_remote_flows_enabled: true`).
+   - IDE runs are local. They probably write as the user's account, which is unconfirmed.
+   - Dry-run checklist with gates 1–3: `docs/duo-setup.md`. Status: **not yet run**, because the extension isn't installed on the Mac.
+   - **Plan C**, if B fails: the built-in Code Review flow (assign `@GitLabDuo` as reviewer, Developer OK) plus `.gitlab/duo/mr-review-instructions.yaml`. Don't use "Fix pipeline with Duo" on the demo MRs.
 3. Use GitLab's built-in Duo code review on the MRs, plus the deterministic checker posting its own MR comment from CI. This is weaker on the Duo gate, so state the limitation honestly in the README.
 
 ## Phase 3 implementation notes

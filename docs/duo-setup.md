@@ -83,4 +83,53 @@ Its limits:
 
 ## Plan B, if Maintainer is not granted
 
-Run the same YAML from the GitLab for VS Code flow builder: install the extension, then set `gitlab.featureFlags.flowBuilder` to `true`. A Developer can **run** flows there, and the run can be recorded for the demo. Publishing to the AI Catalog and creating triggers still need Maintainer.
+Run the same YAML from the GitLab for VS Code flow builder. Checked against the docs on 2026-10-21.
+
+What a Developer can do there ([custom flows](https://docs.gitlab.com/user/duo_agent_platform/flows/custom/)):
+- **Run:** "To run a flow: GitLab Duo Agent Platform must be turned on for the project, and you must have at least the Developer role."
+- **Publish:** needs "the Maintainer or Owner role for the managing project".
+- **Enable and triggers:** "enabling a flow in a project and attaching triggers is done in the GitLab UI only", so Maintainer.
+
+Prerequisites:
+- **Extension:** GitLab for VS Code **6.87.0 or later**. The flow builder is beta, introduced with GitLab 19.3.
+- **Setting:** `"gitlab.featureFlags.flowBuilder": true` (disabled by default).
+- **Agent Platform on for the project:** the project API reports `duo_remote_flows_enabled: true` and `duo_foundational_flows_enabled: true`.
+- **Tier:** Premium or Ultimate ([Agent Platform prerequisites](https://docs.gitlab.com/user/duo_agent_platform/)).
+- **Where it runs:** flows started in an IDE run locally, not on a CI runner ([flow execution](https://docs.gitlab.com/user/duo_agent_platform/flows/execution/)).
+
+Not confirmed by the docs:
+- Which identity the local run writes as. It is probably your own account, not a service account, so the note and label would show your name. Say so on camera.
+- Exactly what the Execution Console takes as input.
+
+### 5-minute dry run (Mac)
+
+1. Install the extension: VS Code > Extensions > "GitLab Workflow" (publisher GitLab). Check that the version is ≥ 6.87.0.
+2. Run **GitLab: Authenticate** and sign in to gitlab.com with OAuth.
+3. Open the settings (`Cmd+,` > Open Settings (JSON)) and add `"gitlab.featureFlags.flowBuilder": true`. Reload the window.
+4. Open this repo folder (the git remote must point at the showcase project). Open `.gitlab/duo/flows/integrity-review.yml`, then select **Open GitLab Flow Builder** in the editor title bar.
+   - **Gate 1:** the builder renders the `integrity_reviewer` agent with no schema errors.
+5. Select **Run**. In the Execution Console, use this goal:
+   ```
+   Input: review
+   Context: {MergeRequest IID: 1}
+   ```
+   Then select **Execute**.
+   - **Gate 2:** tool calls stream: `get_merge_request`, `gitlab_api_get`, and so on.
+6. Check MR !1.
+   - **Gate 3:** a note containing `<!-- eig-duo-review pipeline:` exists, and the `integrity::block` label is set. Also note which account posted it.
+7. If issue creation worked, close the duplicate incident issue it opened. The demo already has issue #2.
+
+If gate 1 or 2 fails, or the Run button is missing or greyed out, switch to Plan C.
+
+## Plan C, if the flow builder also fails for a Developer
+
+Use GitLab's built-in **Code Review** foundational flow. It runs on the Agent Platform, and a Developer can start it ([Code Review flow](https://docs.gitlab.com/user/duo_agent_platform/flows/foundational_flows/code_review/)):
+- **Role:** "Have the Developer, Maintainer, or Owner role for the project."
+- **Group setting:** **Allow foundational flows** and **Code Review** turned on for the top-level group. That is the organizers' setting; the project reports `duo_foundational_flows_enabled: true`.
+- **Trigger:** "Assign `@GitLabDuo` as a reviewer", or `/assign_reviewer @GitLabDuo` in a comment.
+- **Customization:** `.gitlab/duo/mr-review-instructions.yaml` with `instructions: [{name, fileFilters, instructions}]`. We can point it at `eig-report.md` and the integrity rules, so the review explains the checker output. Format: [review instructions](https://docs.gitlab.com/user/gitlab_duo/customize_duo/review_instructions/).
+  - Caveat: that page lists Duo Enterprise as a prerequisite.
+
+Avoid **Fix pipeline with Duo** on the demo MRs. A Developer can run it ([docs](https://docs.gitlab.com/ci/pipelines/fix_pipeline/)), but it adds code suggestions or opens a new MR that "fixes" the deliberate BLOCK findings. That's the opposite of the demo's point.
+
+**How Plan C holds up against the Duo gate:** it uses the Agent Platform's own flow, steered by repository instructions, next to our custom flow YAML. The custom flow YAML is then shown as built but not enabled, because of the role. That's weaker than A or B. State it plainly in the README.
