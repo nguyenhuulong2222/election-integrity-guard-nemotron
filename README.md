@@ -2,6 +2,8 @@
 
 **A supervised GitLab Duo agent workflow that stops bad merges from reaching an election website.**
 
+**Live demo (fictional):** https://showcase-0b6166.gitlab.io (results: [/results.html](https://showcase-0b6166.gitlab.io/results.html), voter info: [/voter-info.html](https://showcase-0b6166.gitlab.io/voter-info.html))
+
 > Built for the GitLab Transcend Hackathon (Path A, new code written in October 2026). The demo site, "Kanaloa County Elections", is **fictional**. Every county, candidate and number in this repository is invented.
 
 ## The problem
@@ -76,8 +78,9 @@ python3 -m checker --base origin/main --mr-description-file /tmp/mr.txt --out-di
 python3 scripts/build_site.py
 python3 -m http.server -d public 8000            # http://localhost:8000
 
-# Check a live site for drift, as the monitor job does
+# Check a live site for drift, as the monitor job does (use the local preview or the live demo)
 python3 scripts/monitor_drift.py --url http://localhost:8000/ --out-dir /tmp/eig
+git fetch origin && python3 scripts/monitor_drift.py --url https://showcase-0b6166.gitlab.io --main-ref origin/main --out-dir /tmp/eig
 ```
 
 Checker exit codes:

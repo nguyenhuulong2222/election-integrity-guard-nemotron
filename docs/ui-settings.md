@@ -2,6 +2,8 @@
 
 Project: `gitlab-ai-hackathon/transcend-october-2026/43545862/showcase` (ID `87857590`)
 
+Live Pages site: **https://showcase-0b6166.gitlab.io** (the `production` environment URL, and `$CI_PAGES_URL` in CI). Deploy > Pages is hidden for the Developer role; read the URL from Operate > Environments > production, or from the `release-pages` job log.
+
 Some protections can only be set in the GitLab UI. Each item says which phase needs it.
 
 > **Role blocker (2026-10-21).** The project owner's account currently has the **Developer** role (access level 30). Items marked **(blocked: needs Maintainer)** can't be changed until the organizers grant Maintainer. That was requested in issue #1, note 4060904922.
@@ -44,8 +46,8 @@ Some protections can only be set in the GitLab UI. Each item says which phase ne
   - Description: "Live site drift monitor"
   - Interval: every 30 minutes (`*/30 * * * *`)
   - Target branch: `main`
-  - Variable: `EIG_JOB` = `monitor`
-- [ ] **First release** _(Developer can do this)_. On the latest `main` pipeline, press **Run** on the manual `release-pages` job. The deploy is human-only on purpose.
+  - Variable: `EIG_JOB` = `monitor` (the job checks https://showcase-0b6166.gitlab.io, set as `EIG_SITE_URL` in `.gitlab-ci.yml`)
+- [x] **First release** _(Developer can do this; done 2026-10-21, commit `1604be91`)_. On the latest `main` pipeline, press **Run** on the manual `release-pages` job. The deploy is human-only on purpose.
 
 ## Phase 4: Duo flow
 
