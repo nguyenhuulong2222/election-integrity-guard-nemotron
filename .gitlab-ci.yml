@@ -116,11 +116,13 @@ monitor:
   image: $PYTHON_IMAGE
   variables:
     GIT_DEPTH: "0"  # the deployed commit must be found in main's history
+    EIG_SITE_URL: "https://showcase-0b6166.gitlab.io"  # live Pages site (same as $CI_PAGES_URL)
   rules:
     - if: $EIG_JOB == "monitor" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
   script:
+    - 'if [ "${CI_PAGES_URL%/}" != "${EIG_SITE_URL%/}" ]; then echo "warning: CI_PAGES_URL ($CI_PAGES_URL) differs from EIG_SITE_URL ($EIG_SITE_URL)"; fi'
     # Opens an incident issue if EIG_BOT_TOKEN is set; always fails the job on drift.
-    - python scripts/monitor_drift.py --main-ref HEAD --out-dir .
+    - python scripts/monitor_drift.py --url "$EIG_SITE_URL" --main-ref HEAD --out-dir .
   artifacts:
     when: always
     paths:
