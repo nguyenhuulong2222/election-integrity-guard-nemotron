@@ -137,11 +137,11 @@ glab api projects/87857590/members/all/43545862
 - [x] Phase 2: demo election site (approved, pushed)
 - [x] Phase 3: checker and CI (approved; pipelines green; site live at https://showcase-0b6166.gitlab.io; monitor schedule 4504749)
 - [x] Phase 4: Duo flow and agent (approved; repo parts done; UI parts blocked on Maintainer, see docs/duo-setup.md). **Plan B cutoff: Thu Oct 22, 6pm HST.**
-- [ ] Phase 5: demo scenario MRs (awaiting "chốt"). They're left open on purpose:
+- [x] Phase 5: demo scenario MRs (approved). They're left open on purpose:
   - !1 arithmetic error → BLOCK (issue #2)
   - !2 lookalike polling link → BLOCK (issue #3)
   - !3 injected script and weakened CSP → BLOCK (issue #4)
   - !4 clean update 4 → PASS (issue #5)
 
   **Never merge them.** The user approves and merges !4 on camera, then presses Run on `release-pages`. Once the flow is enabled, re-run each MR pipeline (or mention the flow) to get the agent reviews.
-- [ ] Phase 6: submission package
+- [ ] Phase 6: submission package. Drafts are done: README, `docs/devpost.md`, `docs/video-script.md` (versions A and B). Nothing is recorded yet. Fill the `<!-- FILL -->` and `<!-- STATUS -->` markers once the flow status is known.
