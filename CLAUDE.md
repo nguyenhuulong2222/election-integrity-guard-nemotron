@@ -114,6 +114,22 @@ glab api projects/87857590/members/all/43545862
 2. Run the flow from the VS Code GitLab flow builder (Developer can run), and record that for the demo.
 3. Use GitLab's built-in Duo code review on the MRs, plus the deterministic checker posting its own MR comment from CI. This is weaker on the Duo gate, so state the limitation honestly in the README.
 
+## Phase 3 implementation notes
+
+**Checker:** `python3 -m checker`, stdlib only.
+- Entry point and orchestration: `checker/engine.py`.
+- Rules, with IDs in the README table:
+  - `rules_results.py`
+  - `rules_site.py`
+  - `rules_governance.py`
+- Output: `eig-report.json` and `eig-report.md`, also printed to the job log between `EIG-REPORT-JSON-BEGIN/END` markers so the Duo flow can read it with `get_job_logs`.
+- Exit code 1 on BLOCK.
+
+**CI:** `.gitlab-ci.yml`, with stages verify, integrity, secure, package, release, monitor.
+- SAST and Secret Detection templates are moved to the `secure` stage, with `AST_ENABLE_MR_PIPELINES=true`.
+- Release is the `release-pages` job (`pages: true`, `when: manual`, main only). A human presses Run. This replaces protected-environment approval, which needs Maintainer.
+- Monitor runs in scheduled pipelines with `EIG_JOB=monitor`. It fails on drift, and opens an issue only if `EIG_BOT_TOKEN` exists.
+
 ## Phase status
 
 - [x] Phase 0: recon and plan
