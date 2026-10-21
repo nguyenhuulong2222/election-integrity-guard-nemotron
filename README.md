@@ -1,93 +1,78 @@
-# Showcase
+# Election Integrity Guard
 
-Transcend Hackathon Showcase workspace for @nguyenhuulong2222 (DevPost: nguyenhuulong2222). Visit the [onboarding issue](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43545862/showcase/-/work_items/1) to get started.
+**A supervised GitLab Duo agent workflow that stops bad merges from reaching an election website.**
 
-## Getting started
+> Built for the GitLab Transcend Hackathon (Path A, new code written in October 2026). The demo site, "Kanaloa County Elections", is **fictional**. Every county, candidate and number in this repository is invented.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## The problem
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Election offices publish results and official voter information on ordinary websites. One bad merge can publish things that damage public trust within minutes:
 
-## Add your files
+- **Wrong numbers.** A typo or a bad export makes the vote totals impossible.
+- **A fake link.** A polling-place lookup link is swapped to a lookalike domain.
+- **An injected script.** A third-party script is added, or the Content Security Policy is quietly weakened.
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+The cause may be an honest mistake, a compromised account, or a malicious insider. Either way, the damage happens at publish time, and code review alone is easy to rush on election night.
+
+## How it works
+
+_Architecture diagram: coming in Phase 6._
+
+1. **Deterministic gate.** A stdlib-only Python checker runs in CI on every merge request. It checks results arithmetic, official-link domains, scripts and assets, the CSP, and governance rules. It emits `BLOCK` / `WARN` / `PASS` as JSON and markdown, and it fails the pipeline on `BLOCK`.
+2. **Duo agent review.** When the pipeline finishes, a GitLab Duo Agent Platform custom flow reads the MR diff and the checker report. It then:
+   - posts a plain-language review (verdict, findings, risk, suggested fix)
+   - applies an `integrity::block`, `integrity::warn` or `integrity::pass` label
+   - opens a linked issue for each BLOCK finding
+3. **Human release.** The agent **cannot** merge, approve or deploy. A code owner approves the MR, and the Pages deploy to `production` waits for that approval.
+4. **Watch after release.** A scheduled job compares the live site with `main` and raises an alarm on drift.
+
+**Autonomy level: Supervised.** The AI explains and recommends, the deterministic checker enforces, and a human decides.
+
+## DevSecOps stages covered
+
+| Stage | Covered by |
+|---|---|
+| Plan | Results-update and incident issue templates |
+| Create | MR template, CODEOWNERS |
+| Verify | `verify` job: lint and unit tests |
+| Secure | `integrity` checker job, plus GitLab SAST and Secret Detection |
+| Package | `package` job: site bundle and SHA-256 manifest |
+| Release | Pages deploy from `main` to a protected `production` environment, after human approval |
+| Configure | Policy-as-code in `config/`, plus the Duo flow config |
+| Monitor | Scheduled drift check of the live site |
+| Govern | Code-owner approval, required issue link, protected branch, agent with no merge rights |
+
+_A full mapping table is coming in Phase 6._
+
+## Repository layout
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43545862/showcase.git
-git branch -M main
-git push -uf origin main
+public/      fictional election site (static HTML, no framework)
+results/     results.json and earlier updates
+config/      allowlists, anomaly threshold, required CSP
+checker/     deterministic integrity checker (Python 3, stdlib only)
+scripts/     monitor / drift job
+.gitlab/     CODEOWNERS, templates, Duo flow and agent definitions
+docs/        settings checklist and architecture
 ```
 
-## Integrate with your tools
+## Run it locally
 
-* [Set up project integrations](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43545862/showcase/-/settings/integrations)
+_Commands are filled in as each phase lands._
 
-## Collaborate with your team
+```bash
+# Requirements: Python 3.11+ (no third-party packages)
+python3 -m unittest discover -s checker/tests        # unit tests (Phase 3)
+python3 -m checker --base origin/main --head HEAD    # run the integrity checker (Phase 3)
+python3 -m http.server -d public 8000                # preview the site (Phase 2)
+```
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+## Project settings
 
-## Test and Deploy
+Some protections can only be set in the GitLab UI. See [`docs/ui-settings.md`](docs/ui-settings.md).
 
-Use the built-in continuous integration in GitLab.
-
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+**Demo disclosure:** this is a solo project, so **"Prevent approval by author" is turned off** and the author approves their own MRs. In production, a separate election official is the required approver, and that setting stays on.
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+[MIT](LICENSE) © 2026 Long Huu Nguyen
