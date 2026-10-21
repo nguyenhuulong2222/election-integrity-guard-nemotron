@@ -45,7 +45,7 @@ def check_protected_paths(changed: Iterable[str], patterns: Iterable[str]) -> li
     if not hits:
         return []
     return [Finding("GOV-002", INFO, CAT_GOV, "Code-owner approval required",
-                    "This MR changes protected paths: " + ", ".join(hits) + ". GitLab requires a code "
+                    "This change touches protected paths: " + ", ".join(hits) + ". GitLab requires a code "
                     "owner to approve before merge.", None, None)]
 
 
