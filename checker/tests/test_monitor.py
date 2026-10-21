@@ -64,6 +64,11 @@ class MonitorTest(unittest.TestCase):
         report = monitor_drift.check(self.url, self.tmp, "HEAD")
         self.assertEqual([m["path"] for m in report["mismatched_files"]], ["data/results.json"])
 
+    def test_non_http_urls_are_refused(self):
+        status, body, _ = monitor_drift.fetch("file:///etc/hosts")
+        self.assertIsNone(status)
+        self.assertIn(b"only http and https", body)
+
     def test_missing_manifest_is_drift(self):
         os.remove(os.path.join(self.tmp, "public", "manifest.json"))
         self.assertTrue(monitor_drift.check(self.url, self.tmp, "HEAD")["drift"])

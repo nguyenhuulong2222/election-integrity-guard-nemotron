@@ -31,14 +31,23 @@ HEADERS_OF_INTEREST = ("strict-transport-security", "content-security-policy", "
                        "content-type", "cache-control")
 
 
+def _open(req: urllib.request.Request, timeout: float = 20.0):
+    """The only place this script opens a URL. urllib also accepts file:// and custom schemes,
+    so anything other than http(s) is refused before the request is made."""
+    scheme = urllib.parse.urlsplit(req.full_url).scheme.lower()
+    if scheme not in ("http", "https"):
+        raise ValueError(f"refusing to open a {scheme or 'scheme-less'} URL; only http and https are allowed")
+    return urllib.request.urlopen(req, timeout=timeout)  # nosemgrep: bandit.B310-1  (scheme checked above)
+
+
 def fetch(url: str, timeout: float = 20.0):
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Cache-Control": "no-cache"})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as res:
+        with _open(req, timeout) as res:
             return res.status, res.read(), {k.lower(): v for k, v in res.headers.items()}
     except urllib.error.HTTPError as exc:
         return exc.code, b"", {}
-    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+    except (urllib.error.URLError, TimeoutError, OSError, ValueError) as exc:
         return None, str(exc).encode(), {}
 
 
@@ -142,13 +151,13 @@ def open_incident(report_md: str) -> str:
 
     query = urllib.parse.urlencode({"state": "opened", "labels": "integrity-incident", "search": title})
     req = urllib.request.Request(f"{api}/projects/{project}/issues?{query}", headers=headers)
-    with urllib.request.urlopen(req, timeout=20) as res:
+    with _open(req) as res:
         existing = [i for i in json.load(res) if i.get("title") == title]
     if existing:
         iid = existing[0]["iid"]
         data = urllib.parse.urlencode({"body": report_md}).encode()
         req = urllib.request.Request(f"{api}/projects/{project}/issues/{iid}/notes", data=data, headers=headers)
-        urllib.request.urlopen(req, timeout=20).close()
+        _open(req).close()
         return existing[0]["web_url"]
 
     description = (report_md + "\n\n_Opened automatically by the scheduled monitor job "
@@ -156,7 +165,7 @@ def open_incident(report_md: str) -> str:
     data = urllib.parse.urlencode({"title": title, "description": description,
                                    "labels": "integrity-incident"}).encode()
     req = urllib.request.Request(f"{api}/projects/{project}/issues", data=data, headers=headers)
-    with urllib.request.urlopen(req, timeout=20) as res:
+    with _open(req) as res:
         return json.load(res)["web_url"]
 
 
@@ -185,7 +194,7 @@ def main(argv=None) -> int:
     if os.environ.get("EIG_BOT_TOKEN"):
         try:
             print(f"Incident issue: {open_incident(md)}")
-        except (urllib.error.URLError, KeyError, OSError) as exc:
+        except (urllib.error.URLError, KeyError, OSError, ValueError) as exc:
             print(f"Could not open incident issue ({type(exc).__name__}); failing the job instead.")
     else:
         print("EIG_BOT_TOKEN is not set, so no incident issue was opened. "
