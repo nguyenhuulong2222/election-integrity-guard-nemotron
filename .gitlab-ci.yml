@@ -41,12 +41,15 @@ include:
   - template: Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml
 
-# Move the template jobs from their default `test` stage into `secure`.
+# Move the template jobs from their default `test` stage into `secure`, and start them
+# immediately (needs: []) so security scans still run when the integrity gate BLOCKs.
 sast:
   stage: secure
+  needs: []
 
 .secret-analyzer:
   stage: secure
+  needs: []
 
 .python:
   image: $PYTHON_IMAGE
