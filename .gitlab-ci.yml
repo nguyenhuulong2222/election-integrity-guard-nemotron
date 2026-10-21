@@ -1,0 +1,129 @@
+# Election Integrity Guard: pipeline for the fictional Kanaloa County election site.
+#
+#   verify     lint + unit tests for the checker and scripts
+#   integrity  deterministic integrity checker; fails the pipeline on BLOCK
+#   secure     GitLab SAST + Secret Detection (templates, all tiers)
+#   package    site bundle + SHA-256 manifest
+#   release    GitLab Pages deploy from main: a human must press "Run" (supervised)
+#   monitor    scheduled drift check of the live site against main
+#
+# The GitLab Duo flow starts from a "Pipeline events" trigger when an MR pipeline finishes,
+# then reads the integrity job's report (artifact + job log). The agent never deploys.
+
+stages:
+  - verify
+  - integrity
+  - secure
+  - package
+  - release
+  - monitor
+
+variables:
+  PYTHON_IMAGE: "python:3.12-slim"
+  # Run the SAST and Secret Detection template jobs in MR pipelines (see the templates' rules).
+  AST_ENABLE_MR_PIPELINES: "true"
+
+workflow:
+  rules:
+    # Scheduled (or manually started) monitor pipelines run only the monitor job.
+    - if: $EIG_JOB == "monitor"
+      variables:
+        SAST_DISABLED: "true"
+        SECRET_DETECTION_DISABLED: "true"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Avoid duplicate branch pipelines while an MR is open.
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+
+# Move the template jobs from their default `test` stage into `secure`.
+sast:
+  stage: secure
+
+.secret-analyzer:
+  stage: secure
+
+.python:
+  image: $PYTHON_IMAGE
+  rules:
+    - if: $EIG_JOB == "monitor"
+      when: never
+    - when: on_success
+
+.with-git:
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq --no-install-recommends git > /dev/null
+    - git --version
+
+verify:
+  stage: verify
+  extends: [.python, .with-git]
+  script:
+    - python -m compileall -q checker scripts
+    - for f in results/*.json results/history/*.json config/*.json; do python -m json.tool "$f" > /dev/null || exit 1; done
+    - python -m unittest discover -s checker/tests -t . -v
+
+integrity:
+  stage: integrity
+  extends: [.python, .with-git]
+  variables:
+    GIT_DEPTH: "0"  # the checker diffs against the MR base and reads base versions of files
+  script:
+    - python -m checker --out-dir .
+  artifacts:
+    when: always
+    expose_as: "Integrity report"
+    paths:
+      - eig-report.json
+      - eig-report.md
+    expire_in: 30 days
+
+package:
+  stage: package
+  extends: .python
+  script:
+    - python scripts/build_site.py
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+
+release-pages:
+  stage: release
+  image: $PYTHON_IMAGE
+  dependencies: [package]
+  script:
+    - echo "Releasing commit $CI_COMMIT_SHORT_SHA to $CI_PAGES_URL after human approval."
+    - python -c "import json; m = json.load(open('public/manifest.json')); print(m['commit'], len(m['files']), 'files')"
+  pages: true
+  environment:
+    name: production
+    url: $CI_PAGES_URL
+  rules:
+    - if: $EIG_JOB == "monitor"
+      when: never
+    # Supervised release: only from main, and only when a person presses "Run" on this job.
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"
+      when: manual
+
+monitor:
+  stage: monitor
+  extends: .with-git
+  image: $PYTHON_IMAGE
+  variables:
+    GIT_DEPTH: "0"  # the deployed commit must be found in main's history
+  rules:
+    - if: $EIG_JOB == "monitor" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
+  script:
+    # Opens an incident issue if EIG_BOT_TOKEN is set; always fails the job on drift.
+    - python scripts/monitor_drift.py --main-ref HEAD --out-dir .
+  artifacts:
+    when: always
+    paths:
+      - drift-report.json
+      - drift-report.md
+    expire_in: 90 days
