@@ -82,7 +82,7 @@ Context for any Claude Code session working on this repository.
 
 **Fallbacks:**
 - **Monitor:** if `EIG_BOT_TOKEN` (project access token) isn't available on our tier, the monitor job must **FAIL the scheduled pipeline** with the drift report instead of opening an issue.
-- **Labels:** if `update_merge_request add_labels` fails, the CI job applies the `integrity::*` label instead.
+- **Labels:** the planned CI label fallback is **infeasible**, because a Developer can't create CI/CD variables, so there's no token. The replacement is a Code Quality report (`eig-codequality.json`), which shows BLOCK and WARN findings in the MR widget on all tiers.
 
 **Pages:** GitLab Pages has no custom-headers support. The CSP is a `<meta http-equiv>` tag enforced by the checker. HSTS isn't controllable on `*.gitlab.io`, so the monitor job records the live headers instead.
 
@@ -135,7 +135,7 @@ glab api projects/87857590/members/all/43545862
 - [x] Phase 0: recon and plan
 - [x] Phase 1: repo foundation (approved, pushed)
 - [x] Phase 2: demo election site (approved, pushed)
-- [ ] Phase 3: checker and CI (in progress)
-- [ ] Phase 4: Duo flow and agent
+- [x] Phase 3: checker and CI (approved; pipelines green; site live at https://showcase-0b6166.gitlab.io; monitor schedule 4504749)
+- [ ] Phase 4: Duo flow and agent (repo parts done; UI parts blocked on Maintainer, see docs/duo-setup.md)
 - [ ] Phase 5: demo scenario MRs
 - [ ] Phase 6: submission package

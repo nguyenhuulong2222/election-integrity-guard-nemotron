@@ -54,15 +54,16 @@ Some protections can only be set in the GitLab UI. Each item says which phase ne
 ## Phase 4: Duo flow
 
 - [ ] **Confirm the AI menu.** The left sidebar shows **AI > Flows / Agents / Triggers**.
-- [ ] **Create labels.** Manage > Labels:
+- [x] **Create labels** _(done with the API on 2026-10-21; Developer can do this)_. Manage > Labels:
   - `integrity::block` (red)
   - `integrity::warn` (amber)
   - `integrity::pass` (green)
   - `integrity-incident`
   - `results-update`
-- [ ] **Create the flow** from `.gitlab/duo/flows/integrity-review.yml`: AI > Flows > New flow, visibility Private. **(blocked: needs Maintainer)**
+- [ ] **Create the flow**: follow [`docs/duo-setup.md`](duo-setup.md), using `.gitlab/duo/flows/integrity-review.yml`: AI > Flows > New flow, visibility Private. **(blocked: needs Maintainer)**
 - [ ] **Enable the flow** in this project. This creates its service account, which has the Developer role and **cannot merge** to protected `main`. **(blocked: needs Maintainer)**
 - [ ] **Create triggers.** AI > Triggers > New flow trigger: **(blocked: needs Maintainer)**
   - Pipeline events: Passed, Failed
   - Mention
-- [ ] **Create the custom agent** "Integrity Advisor" (AI > Agents > New agent) from `.gitlab/duo/agents/integrity-advisor.md`. **(blocked: needs Maintainer)**
+- [ ] **Create the custom agent** "Integrity Advisor" (AI > Agents > New agent) from `.gitlab/duo/agents/integrity-advisor.md`.
+- [x] **Pipeline schedule** "integrity monitor" (ID 4504749, `*/30 * * * *`, `main`, no variables). Created with the API on 2026-10-21. The first run, pipeline #2973392233, was green. **(blocked: needs Maintainer)**

@@ -25,6 +25,8 @@ _Architecture diagram: coming in Phase 6._
    - posts a plain-language review (verdict, findings, risk, suggested fix)
    - applies an `integrity::block`, `integrity::warn` or `integrity::pass` label
    - opens a linked issue for each BLOCK finding
+
+   The checker's findings also show in the MR widget through a Code Quality report, so the gate is visible even without the agent. To turn on the Duo flow and agent, see [`docs/duo-setup.md`](docs/duo-setup.md).
 3. **Human release.** The agent **cannot** merge, approve or deploy. A code owner approves the MR, and the Pages deploy to `production` waits for that approval.
 4. **Watch after release.** A scheduled job compares the live site with `main` and raises an alarm on drift.
 
