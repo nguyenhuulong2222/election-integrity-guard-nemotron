@@ -40,7 +40,12 @@ Some protections can only be set in the GitLab UI. Each item says which phase ne
 - [ ] **Protected environment `production`.** Settings > CI/CD > Protected environments: allowed to deploy = Maintainers, **required approvals = 1**. _(Premium or Ultimate. Same solo-author caveat as above.)_ **(blocked: needs Maintainer)**
 - [ ] **CI/CD variable `EIG_BOT_TOKEN`.** Create a project access token (Settings > Access tokens: role Reporter, scope `api`, expiry ≤ Oct 31 2026). Store it in Settings > CI/CD > Variables as **Masked + Protected**, never as a file in the repo. **(blocked: needs Maintainer)**
   - If project access tokens aren't available on our tier, skip this. The monitor job then **fails the scheduled pipeline** with the drift report, instead of opening an issue.
-- [ ] **Pipeline schedule.** Build > Pipeline schedules > New: target `main`, every 30 minutes, variable `EIG_JOB=monitor`.
+- [ ] **Pipeline schedule** _(Developer can do this)_. Build > Pipeline schedules > New schedule:
+  - Description: "Live site drift monitor"
+  - Interval: every 30 minutes (`*/30 * * * *`)
+  - Target branch: `main`
+  - Variable: `EIG_JOB` = `monitor`
+- [ ] **First release** _(Developer can do this)_. On the latest `main` pipeline, press **Run** on the manual `release-pages` job. The deploy is human-only on purpose.
 
 ## Phase 4: Duo flow
 

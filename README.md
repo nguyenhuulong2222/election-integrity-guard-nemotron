@@ -58,15 +58,47 @@ docs/        settings checklist and architecture
 
 ## Run it locally
 
-_Commands are filled in as each phase lands._
+Requirements: Python 3.11+ and git. No third-party packages.
 
 ```bash
-# Requirements: Python 3.11+ (no third-party packages)
-python3 -m unittest discover -s checker/tests        # unit tests (Phase 3)
-python3 -m checker --base origin/main --head HEAD    # run the integrity checker (Phase 3)
-mkdir -p public/data && cp results/results.json public/data/   # the package job does this in CI
-python3 -m http.server -d public 8000                # preview the site at http://localhost:8000
+# Unit tests: rules, the four demo scenarios end to end, and the package and monitor scripts
+python3 -m unittest discover -s checker/tests -t . -v
+
+# Run the integrity checker against main, as the integrity CI job does
+python3 -m checker --base origin/main --out-dir /tmp/eig --no-fail
+cat /tmp/eig/eig-report.md
+
+# Simulate an MR, including the "must reference an issue" rule
+echo "Closes #2" > /tmp/mr.txt
+python3 -m checker --base origin/main --mr-description-file /tmp/mr.txt --out-dir /tmp/eig
+
+# Build and preview the site, as the package job does
+python3 scripts/build_site.py
+python3 -m http.server -d public 8000            # http://localhost:8000
+
+# Check a live site for drift, as the monitor job does
+python3 scripts/monitor_drift.py --url http://localhost:8000/ --out-dir /tmp/eig
 ```
+
+Checker exit codes:
+
+| Code | Meaning |
+|---|---|
+| `0` | PASS or WARN |
+| `1` | BLOCK |
+| `2` | Configuration error |
+
+### Integrity rules
+
+| Area | Rules | Severity |
+|---|---|---|
+| Results arithmetic | Votes are non-negative integers; candidate votes sum to the contest total; precincts reporting ≤ total; ballots cast ≤ registered voters; turnout is 0–100% and matches the counts; a contest total is never above ballots cast | BLOCK |
+| Anomalies, compared with the previous update | A vote-share swing larger than `config/policy.json → anomaly.max_share_swing_pp` (default 5 pp); vote counts or precincts going down; update sequence not increasing; candidate list changed | WARN |
+| Official links | Must be HTTPS on an allowlisted domain (`config/allowlist.json`); lookalikes of official domains are blocked anywhere on the site (digit or homoglyph swaps, hyphens, extra words, punycode) | BLOCK |
+| Scripts and assets | Third-party `<script>`, `<iframe>`, `<embed>` or `<object>` off the allowlist; inline `<script>`; inline `on*=` handlers; `javascript:` URLs | BLOCK |
+| | `eval` / `new Function` / string timers; `innerHTML`-style sinks; third-party stylesheets | WARN |
+| Security headers | CSP `<meta>` present on every page; required directives kept; no `'unsafe-inline'`, `*` or scheme wildcards; no widening against the MR base; `config/security-policy.json` never loosened | BLOCK |
+| Governance | The MR must reference an issue; CODEOWNERS must cover `/results/` and `/config/`; changes to protected paths are noted for code-owner approval | BLOCK / INFO |
 
 ## Project settings
 
