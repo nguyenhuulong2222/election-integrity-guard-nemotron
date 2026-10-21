@@ -4,35 +4,35 @@
   "jurisdiction": "Kanaloa County (fictional)",
   "election": "2026 General Election (demo data)",
   "update": {
-    "sequence": 3,
-    "published_at": "2026-11-03T22:30:00-10:00",
+    "sequence": 4,
+    "published_at": "2026-11-03T23:45:00-10:00",
     "status": "unofficial"
   },
   "turnout": {
     "registered_voters": 48210,
-    "ballots_cast": 30118,
-    "turnout_percent": 62.47
+    "ballots_cast": 34502,
+    "turnout_percent": 71.57
   },
   "contests": [
     {
       "id": "mayor",
       "title": "Mayor",
       "type": "candidate",
-      "precincts_reporting": 38,
+      "precincts_reporting": 42,
       "precincts_total": 42,
-      "total_votes": 29402,
+      "total_votes": 33630,
       "candidates": [
         {
           "name": "Avery Quill",
-          "votes": 14233
+          "votes": 16284
         },
         {
           "name": "Dana Ironwood",
-          "votes": 12876
+          "votes": 14752
         },
         {
           "name": "Kai Pennington-Lua",
-          "votes": 2293
+          "votes": 2594
         }
       ]
     },
@@ -40,17 +40,17 @@
       "id": "council-d2",
       "title": "County Council, District 2",
       "type": "candidate",
-      "precincts_reporting": 12,
+      "precincts_reporting": 14,
       "precincts_total": 14,
-      "total_votes": 9870,
+      "total_votes": 11078,
       "candidates": [
         {
           "name": "Sam Okabe-Reyes",
-          "votes": 5112
+          "votes": 5730
         },
         {
           "name": "Noelani Fitch",
-          "votes": 4758
+          "votes": 5348
         }
       ]
     },
@@ -58,17 +58,17 @@
       "id": "charter-amendment-1",
       "title": "Charter Amendment 1: Open Data for Public Records",
       "type": "measure",
-      "precincts_reporting": 38,
+      "precincts_reporting": 42,
       "precincts_total": 42,
-      "total_votes": 28192,
+      "total_votes": 32202,
       "candidates": [
         {
           "name": "Yes",
-          "votes": 16904
+          "votes": 19304
         },
         {
           "name": "No",
-          "votes": 11288
+          "votes": 12898
         }
       ]
     }
