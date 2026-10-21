@@ -92,12 +92,34 @@ Context for any Claude Code session working on this repository.
 2. **After Phase 3:** turn on "Pipelines must succeed".
 3. **Before Phase 5:** set push = **No one** and code-owner approval **ON**. From then on, every change goes through an MR.
 
+## Role blocker and Plan B (2026-10-21)
+
+**Blocker.** The user's role is **Developer** (access_level 30) on both the project and the group, and Developer is not enough for the Duo work:
+- Creating, enabling or triggering a custom flow or custom agent needs Maintainer or Owner.
+- So do branch rules, approval rules, protected environments and project access tokens.
+
+**Status.** Maintainer was requested on issue #1 (note 4060904922, mentions contributor-success), and the user is also asking on Discord. Re-check `access_level` at every gate:
+
+```
+glab api projects/87857590/members/all/43545862
+```
+
+**What still works as a Developer:**
+- CI pipelines, the checker, the Pages deploy (`main` allows Developer push and merge), pipeline schedules
+- labels, MRs, issues
+- running flows that someone else has already enabled
+
+**Plan B, if Maintainer isn't granted:**
+1. Build and publish the flow from a personal project where the user is Owner, as a **Public** AI Catalog item. Enabling and triggering it in the showcase project still needs a Maintainer, so this only partly helps.
+2. Run the flow from the VS Code GitLab flow builder (Developer can run), and record that for the demo.
+3. Use GitLab's built-in Duo code review on the MRs, plus the deterministic checker posting its own MR comment from CI. This is weaker on the Duo gate, so state the limitation honestly in the README.
+
 ## Phase status
 
 - [x] Phase 0: recon and plan
 - [x] Phase 1: repo foundation (approved, pushed)
-- [ ] Phase 2: demo election site (in progress)
-- [ ] Phase 3: checker and CI
+- [x] Phase 2: demo election site (approved, pushed)
+- [ ] Phase 3: checker and CI (in progress)
 - [ ] Phase 4: Duo flow and agent
 - [ ] Phase 5: demo scenario MRs
 - [ ] Phase 6: submission package
