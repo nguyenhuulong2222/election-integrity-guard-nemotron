@@ -128,7 +128,7 @@ glab api projects/87857590/members/all/43545862
 **CI:** `.gitlab-ci.yml`, with stages verify, integrity, secure, package, release, monitor.
 - SAST and Secret Detection templates are moved to the `secure` stage, with `AST_ENABLE_MR_PIPELINES=true`.
 - Release is the `release-pages` job (`pages: true`, `when: manual`, main only). A human presses Run. This replaces protected-environment approval, which needs Maintainer.
-- Monitor runs in scheduled pipelines with `EIG_JOB=monitor`. It fails on drift, and opens an issue only if `EIG_BOT_TOKEN` exists.
+- Monitor runs in every scheduled pipeline (no variables, because Developers can't set pipeline variables here). It fails on drift, and opens an issue only if `EIG_BOT_TOKEN` exists.
 
 ## Phase status
 

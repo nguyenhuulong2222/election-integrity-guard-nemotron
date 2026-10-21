@@ -46,7 +46,9 @@ Some protections can only be set in the GitLab UI. Each item says which phase ne
   - Description: "Live site drift monitor"
   - Interval: every 30 minutes (`*/30 * * * *`)
   - Target branch: `main`
-  - Variable: `EIG_JOB` = `monitor` (the job checks https://showcase-0b6166.gitlab.io, set as `EIG_SITE_URL` in `.gitlab-ci.yml`)
+  - **No variables.** Every scheduled pipeline runs only the monitor job. This project blocks pipeline variables for Developers, which is why `EIG_JOB` was dropped.
+  - The job checks https://showcase-0b6166.gitlab.io (`EIG_SITE_URL` in `.gitlab-ci.yml`).
+  - To run it on demand, press ▶ (Play) on the schedule.
 - [x] **First release** _(Developer can do this; done 2026-10-21, commit `1604be91`)_. On the latest `main` pipeline, press **Run** on the manual `release-pages` job. The deploy is human-only on purpose.
 
 ## Phase 4: Duo flow
