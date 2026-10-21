@@ -81,6 +81,9 @@ integrity:
     paths:
       - eig-report.json
       - eig-report.md
+      - eig-codequality.json
+    reports:
+      codequality: eig-codequality.json  # BLOCK/WARN findings in the MR widget (all tiers)
     expire_in: 30 days
 
 package:

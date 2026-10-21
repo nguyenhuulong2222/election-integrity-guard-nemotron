@@ -10,6 +10,7 @@ htmlcov/
 # Checker / CI outputs (produced in CI, never committed)
 eig-report.json
 eig-report.md
+eig-codequality.json
 manifest.json
 drift-report.*
 gl-*-report.json

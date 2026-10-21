@@ -13,7 +13,7 @@ import sys
 
 from . import gitutil
 from .engine import run
-from .report import JSON_BEGIN, JSON_END, to_json, to_markdown
+from .report import JSON_BEGIN, JSON_END, to_codequality, to_json, to_markdown
 
 
 def _default_base() -> str | None:
@@ -33,7 +33,8 @@ def main(argv=None) -> int:
                         help="git ref to compare against (default: the MR diff base in CI, else no comparison)")
     parser.add_argument("--mr-description-file", default=None,
                         help="treat this run as an MR and read its description from this file")
-    parser.add_argument("--out-dir", default=".", help="where to write eig-report.json and eig-report.md")
+    parser.add_argument("--out-dir", default=".",
+                        help="where to write eig-report.json, eig-report.md and eig-codequality.json")
     parser.add_argument("--no-fail", action="store_true", help="always exit 0 (local exploration)")
     args = parser.parse_args(argv)
 
@@ -74,6 +75,8 @@ def main(argv=None) -> int:
         fh.write(md)
     with open(os.path.join(args.out_dir, "eig-report.json"), "w", encoding="utf-8") as fh:
         fh.write(js)
+    with open(os.path.join(args.out_dir, "eig-codequality.json"), "w", encoding="utf-8") as fh:
+        fh.write(to_codequality(report))
 
     # The job log carries the full report too, so the Duo flow can read it with get_job_logs.
     print(md)

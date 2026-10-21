@@ -134,6 +134,11 @@ class ScenarioTest(unittest.TestCase):
             code = main(["--root", self.tmp, "--base", self.base, "--mr-description-file", desc, "--out-dir", out])
         self.assertEqual(code, 1)
         self.assertTrue(os.path.exists(os.path.join(out, "eig-report.md")))
+        with open(os.path.join(out, "eig-codequality.json"), encoding="utf-8") as fh:
+            cq = json.load(fh)
+        self.assertEqual([(i["check_name"], i["severity"], i["location"]["path"]) for i in cq],
+                         [("RES-004", "blocker", "results/results.json")])
+        self.assertEqual(len(cq[0]["fingerprint"]), 64)
 
 
 if __name__ == "__main__":
