@@ -12,9 +12,9 @@ import tempfile
 import threading
 import unittest
 
-from checker.tests.helpers import REPO
+from checker.tests.helpers import REPO, ROOT
 
-sys.path.insert(0, os.path.join(REPO, "scripts"))
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import build_site  # noqa: E402
 import monitor_drift  # noqa: E402
 

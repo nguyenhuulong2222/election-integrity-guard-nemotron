@@ -4,7 +4,12 @@ import copy
 import json
 import os
 
-REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+# Repository root, for importing code such as scripts/.
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+# Frozen snapshot of config/, results/, public/ and CODEOWNERS (see fixtures/repo/README.md).
+# Tests never read the live files, because on an MR branch those are the change under test.
+REPO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "repo")
 
 
 def load_repo_json(rel):
