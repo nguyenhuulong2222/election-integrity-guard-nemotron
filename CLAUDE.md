@@ -86,11 +86,17 @@ Context for any Claude Code session working on this repository.
 
 **Pages:** GitLab Pages has no custom-headers support. The CSP is a `<meta http-equiv>` tag enforced by the checker. HSTS isn't controllable on `*.gitlab.io`, so the monitor job records the live headers instead.
 
+## Branch protection sequencing (see docs/ui-settings.md)
+
+1. **Phases 1–4:** `main` is protected, but Maintainers can push directly. Code-owner approval is **off**, because it denies direct pushes that touch code-owned paths.
+2. **After Phase 3:** turn on "Pipelines must succeed".
+3. **Before Phase 5:** set push = **No one** and code-owner approval **ON**. From then on, every change goes through an MR.
+
 ## Phase status
 
 - [x] Phase 0: recon and plan
-- [x] Phase 1: repo foundation (awaiting "chốt")
-- [ ] Phase 2: demo election site
+- [x] Phase 1: repo foundation (approved, pushed)
+- [ ] Phase 2: demo election site (in progress)
 - [ ] Phase 3: checker and CI
 - [ ] Phase 4: Duo flow and agent
 - [ ] Phase 5: demo scenario MRs
