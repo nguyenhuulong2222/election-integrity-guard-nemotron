@@ -64,7 +64,8 @@ _Commands are filled in as each phase lands._
 # Requirements: Python 3.11+ (no third-party packages)
 python3 -m unittest discover -s checker/tests        # unit tests (Phase 3)
 python3 -m checker --base origin/main --head HEAD    # run the integrity checker (Phase 3)
-python3 -m http.server -d public 8000                # preview the site (Phase 2)
+mkdir -p public/data && cp results/results.json public/data/   # the package job does this in CI
+python3 -m http.server -d public 8000                # preview the site at http://localhost:8000
 ```
 
 ## Project settings
