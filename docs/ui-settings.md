@@ -6,7 +6,7 @@ Live Pages site: **https://showcase-0b6166.gitlab.io** (the `production` environ
 
 Some protections can only be set in the GitLab UI. Each item says which phase needs it.
 
-> **Role blocker (2026-10-21).** The project owner's account currently has the **Developer** role (access level 30). Items marked **(blocked: needs Maintainer)** can't be changed until the organizers grant Maintainer. That was requested in issue #1, note 4060904922.
+> **Role (updated 2026-10-21).** Maintainer will not be granted (issue #1, note 4061769259). The owner's custom role **Developer+** can create, enable and trigger flows and agents, manage MR approval settings and merge checks, and edit CI/CD variables. It **cannot** change protected branches, protected environments or project access tokens. Items still marked **(blocked: needs Maintainer)** may now be possible; the flow, trigger, approval and merge-check items are covered by Developer+.
 
 ## Phase 1: now
 

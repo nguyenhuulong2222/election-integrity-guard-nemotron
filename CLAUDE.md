@@ -92,32 +92,43 @@ Context for any Claude Code session working on this repository.
 2. **After Phase 3:** turn on "Pipelines must succeed".
 3. **Before Phase 5:** set push = **No one** and code-owner approval **ON**. From then on, every change goes through an MR.
 
-## Role blocker and Plan B (2026-10-21)
+## Role and Plan A (updated 2026-10-21, late)
 
-**Blocker.** The user's role is **Developer** (access_level 30) on both the project and the group, and Developer is not enough for the Duo work:
-- Creating, enabling or triggering a custom flow or custom agent needs Maintainer or Owner.
-- So do branch rules, approval rules, protected environments and project access tokens.
+**Role.** Maintainer will **not** be granted. Organizers said so on issue #1 (note 4061769259, mmichaux-ext).
+- The user has the custom role **"Developer+"**: base Developer (access_level 30), member_role 3007169, set on the GitLab AI Hackathon group 121124982.
+- **Granted:**
+  - `admin_ai_catalog_item` and `admin_ai_catalog_item_consumer`: create and enable flows and agents, and configure triggers
+  - `manage_merge_request_settings`: approval rules and merge checks
+  - `admin_cicd_variables`
+  - `admin_web_hook`
+- **Not granted:**
+  - `admin_protected_branch`: so `main` keeps its current rules, and push = No one and code-owner approval stay undone
+  - `admin_protected_environments`
+  - `manage_project_access_tokens`: so `EIG_BOT_TOKEN` stays impossible. Don't substitute a personal token.
+- The docs still say "Maintainer" for these actions. If the UI refuses one, post the URL, action and exact error on issue #1.
+- Re-check the role at every gate: `glab api projects/87857590/members/all/43545862` (`access_level` and `member_role`).
 
-**Status.** Maintainer was requested on issue #1 (note 4060904922, mentions contributor-success), and the user is also asking on Discord. Re-check `access_level` at every gate:
+**Plan A (current).** Click-by-click steps are in `docs/duo-setup.md` (steps 0–4):
+1. Default Duo group = GitLab AI Hackathon (Preferences > AI assistance)
+2. AI > Flows > New flow (paste the YAML, Private)
+3. Managed > Enable, with Pipeline events (Passed, Failed) and Mention triggers
+4. Integrity Advisor agent
+5. Smoke test on !1
 
-```
-glab api projects/87857590/members/all/43545862
-```
+**Flow security validation (fixed 2026-10-21, commit `ad2a939`).** GitLab's Duo Workflow Service validates every flow prompt with `PromptSecurity` (validate-only) and aborts with "Flow configuration failed security validation" if it finds:
+- HTML comments
+- `<system>` or `<goal>` tags
+- markdown comments (`[//]: #`)
+- hidden Unicode
 
-**What still works as a Developer:**
-- CI pipelines, the checker, the Pages deploy (`main` allows Developer push and merge), pipeline schedules
-- labels, MRs, issues
-- running flows that someone else has already enabled
+It also strips those patterns from tool output. So **never use HTML comments in prompts or as markers**. The review marker is the visible line `EIG Duo review · pipeline <id>`.
 
-**Plan B, if Maintainer isn't granted:**
-1. Build and publish the flow from a personal project where the user is Owner, as a **Public** AI Catalog item. Enabling and triggering it in the showcase project still needs a Maintainer, so this only partly helps.
-2. Run the flow from the VS Code GitLab flow builder, and record that for the demo.
-   - **Confirmed from the docs (2026-10-21):** a Developer can **Run** a flow there, but can't publish it, enable it or attach triggers.
-   - **Needs:** extension ≥ 6.87.0, `gitlab.featureFlags.flowBuilder: true`, and the Agent Platform on for the project (API: `duo_remote_flows_enabled: true`).
-   - IDE runs are local. They probably write as the user's account, which is unconfirmed.
-   - Dry-run checklist with gates 1–3: `docs/duo-setup.md`. Status: **not yet run**, because the extension isn't installed on the Mac.
-   - **Plan C**, if B fails: the built-in Code Review flow (assign `@GitLabDuo` as reviewer, Developer OK) plus `.gitlab/duo/mr-review-instructions.yaml`. Don't use "Fix pipeline with Duo" on the demo MRs.
-3. Use GitLab's built-in Duo code review on the MRs, plus the deterministic checker posting its own MR comment from CI. This is weaker on the Duo gate, so state the limitation honestly in the README.
+**Fallbacks:**
+- **Plan B:** run the flow from the VS Code flow builder (ext 7.2.5).
+  - Gate 1 passed.
+  - The editor-title button only shows for `resourceLangId == yaml`, and the command is hidden in the palette.
+  - The Execute step was the one rejected by the security check above, so try it again.
+- **Plan C:** the built-in Code Review flow (`@GitLabDuo` reviewer) plus `.gitlab/duo/mr-review-instructions.yaml`. Don't use "Fix pipeline with Duo" on the demo MRs.
 
 ## Phase 3 implementation notes
 
@@ -141,7 +152,7 @@ glab api projects/87857590/members/all/43545862
 - [x] Phase 1: repo foundation (approved, pushed)
 - [x] Phase 2: demo election site (approved, pushed)
 - [x] Phase 3: checker and CI (approved; pipelines green; site live at https://showcase-0b6166.gitlab.io; monitor schedule 4504749)
-- [x] Phase 4: Duo flow and agent (approved; repo parts done; UI parts blocked on Maintainer, see docs/duo-setup.md). **Plan B cutoff: Thu Oct 22, 6pm HST.**
+- [x] Phase 4: Duo flow and agent (approved; repo parts done). UI parts are now doable with the Developer+ role (Plan A, see docs/duo-setup.md). Plan B cutoff (Thu Oct 22, 6pm HST) still applies if the UI refuses.
 - [x] Phase 5: demo scenario MRs (approved). They're left open on purpose:
   - !1 arithmetic error → BLOCK (issue #2)
   - !2 lookalike polling link → BLOCK (issue #3)
