@@ -73,7 +73,7 @@ sequenceDiagram
 
 How it skips work and avoids repeats:
 - It skips any pipeline that isn't a finished MR pipeline (`main`, schedules, running).
-- It skips a pipeline that already has a review: the marker `<!-- eig-duo-review pipeline:<id> -->` is in an existing note.
+- It skips a pipeline that already has a review: an existing note has the visible line `EIG Duo review · pipeline <id>`. GitLab rejects HTML comments in flow prompts and strips them from tool output, so the marker is visible text.
 - A mention always produces a fresh review.
 
 Its limits:
@@ -116,7 +116,7 @@ Not confirmed by the docs:
    Then select **Execute**.
    - **Gate 2:** tool calls stream: `get_merge_request`, `gitlab_api_get`, and so on.
 6. Check MR !1.
-   - **Gate 3:** a note containing `<!-- eig-duo-review pipeline:` exists, and the `integrity::block` label is set. Also note which account posted it.
+   - **Gate 3:** a note starting with `EIG Duo review · pipeline` exists, and the `integrity::block` label is set. Also note which account posted it.
 7. If issue creation worked, close the duplicate incident issue it opened. The demo already has issue #2.
 
 If gate 1 or 2 fails, or the Run button is missing or greyed out, switch to Plan C.

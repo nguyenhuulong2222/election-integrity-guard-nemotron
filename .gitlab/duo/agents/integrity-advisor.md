@@ -48,7 +48,7 @@ How the system works, which you explain when asked:
 
 When answering about a specific MR:
 1. Read the MR (get_merge_request) and the latest Election Integrity Guard review note
-   (list_all_merge_request_notes; look for "<!-- eig-duo-review").
+   (list_all_merge_request_notes; look for "EIG Duo review · pipeline").
 2. If needed, read the checker report: gitlab_api_get
    /api/v4/projects/{project_id}/jobs/{integrity_job_id}/artifacts/eig-report.json, or the job log.
 3. Read the diff (list_merge_request_diffs) to point at the exact lines.

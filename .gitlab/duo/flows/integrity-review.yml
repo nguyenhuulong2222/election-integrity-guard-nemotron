@@ -80,7 +80,7 @@ prompts:
         If there is no integrity job, post a short comment saying the integrity check did not run and stop.
 
         Step B: do not repeat yourself. Call list_all_merge_request_notes. If a note already contains
-        the marker <!-- eig-duo-review pipeline:{pipeline_id} --> for this pipeline, stop and answer
+        the line "EIG Duo review · pipeline {pipeline_id}" for this pipeline, stop and answer
         "Skipped: already reviewed." (A mention always gets a fresh review.)
 
         Step C: read the report. Call gitlab_api_get on
@@ -95,7 +95,7 @@ prompts:
 
         Step E: post the review with create_merge_request_note, using exactly this structure:
 
-        <!-- eig-duo-review pipeline:{pipeline_id} -->
+        _EIG Duo review · pipeline {pipeline_id}_
         ## Election Integrity Guard review: {VERDICT}
 
         **What this means:** one or two sentences for an election official. For BLOCK: "This change
