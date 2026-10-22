@@ -14,6 +14,15 @@
 - Live demo (fictional): https://showcase-0b6166.gitlab.io
 - Video: <!-- FILL: YouTube URL -->
 
+**Image gallery** (upload in this order; all captured logged out, all data fictional):
+1. [`screenshots/cover.png`](screenshots/cover.png): cover, 1500×1000
+2. [`screenshots/mr2-duo-review.png`](screenshots/mr2-duo-review.png): Duo review on !2, lookalike domain BLOCK
+3. [`screenshots/mr3-code-quality-report.png`](screenshots/mr3-code-quality-report.png): five blockers on !3
+4. [`screenshots/mr1-duo-review.png`](screenshots/mr1-duo-review.png): arithmetic BLOCK on !1
+5. [`screenshots/mr4-duo-review.png`](screenshots/mr4-duo-review.png): PASS review on !4
+6. [`screenshots/mr3-pipeline.png`](screenshots/mr3-pipeline.png): `integrity` fails while the security scans pass
+7. [`screenshots/site-results.png`](screenshots/site-results.png): the fictional results page
+
 ---
 
 ## Inspiration
@@ -49,7 +58,7 @@ In the demo, four MRs against the fictional "Kanaloa County Elections" site show
 - **Deterministic first, AI on top.** All integrity rules are plain Python 3 with no dependencies, plus **64 unit tests**: every rule, the four demo scenarios end to end, and the package and monitor scripts against a local server. The tests use a frozen fixture snapshot, so they test the checker rather than the MR being checked.
 - **Duo flow from the official schema.** The flow is a flow registry v1 YAML: `environment: ambient`, `coding_environment: none`, one `AgentComponent` with a locally defined prompt. We kept to the custom-flow restrictions in GitLab's docs (no `model`, no response schemas, no top-level name) and used only documented tools: `get_merge_request`, `list_merge_request_diffs`, `get_job_logs`, `gitlab_api_get`, `create_merge_request_note`, `update_merge_request` (labels only) and `create_issue`. The flow:
   - skips any pipeline that isn't a finished MR pipeline
-  - won't post twice for the same pipeline (a hidden marker in its comment)
+  - won't post twice for the same pipeline: a visible `EIG Duo review · pipeline <id>` marker, because GitLab rejects HTML comments in flow prompts
   - treats MR text as untrusted data, not instructions
 - **The checker reaches the agent two ways.** The report is a job artifact and is also printed into the job log, so the flow can read it with either `gitlab_api_get` or `get_job_logs`.
 - **The pipeline covers the whole lifecycle:**
@@ -77,10 +86,11 @@ In the demo, four MRs against the fictional "Kanaloa County Elections" site show
 
 ## Challenges we ran into
 
-- **Our hackathon role was Developer, not Maintainer.**
-  - Branch rules, approval rules, protected environments, CI/CD variables, pipeline variables, and creating or triggering Duo flows all need Maintainer.
+- **Our hackathon role was a "Developer+" custom role, not Maintainer.**
+  - It can create, enable and trigger Duo flows and agents, but not change protected branches, protected environments or project access tokens.
   - We redesigned around it: a manual release job as the human gate, a scheduled pipeline that needs no variables, and a Code Quality report so findings appear in the MR widget with no token.
-  - We documented every setting that should be on in production. The Duo flow is enabled with the hackathon's "Developer+" custom role and fires on every finished MR pipeline (Pipeline events trigger, filtered to MR pipelines).
+  - We documented every setting that should be on in production. The Duo flow fires on every finished MR pipeline (Pipeline events trigger, filtered to MR pipelines).
+- **GitLab's flow security validation.** Our first flow was rejected with "Flow configuration failed security validation". The cause was an HTML-comment marker in the prompt. We found the check in the Duo Workflow Service source, moved to a visible marker, and now run GitLab's own prompt sanitizers locally before every flow change.
 - **GitLab Pages can't set response headers.** The CSP ships as a `<meta>` tag that the checker enforces, and we're upfront that `frame-ancestors` and HSTS can't be enforced this way.
 - **Our own pipeline caught our own bug.** The first demo MR pipelines failed in `verify`, because the unit tests read the live data that the MR was changing. We moved the tests to a frozen fixture and made security scans run even when the gate blocks. Both fixes are visible in the pipeline history.
 

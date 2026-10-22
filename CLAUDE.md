@@ -167,7 +167,12 @@ It also strips those patterns from tool output. So **never use HTML comments in 
   - !3 injected script and weakened CSP → BLOCK (issue #4)
   - !4 clean update 4 → PASS (issue #5)
 
-  **Never merge them.** The user approves and merges !4 on camera, then presses Run on `release-pages`. Once the flow is enabled, re-run each MR pipeline (or mention the flow) to get the agent reviews.
-- [ ] Phase 6: submission package.
-  - Done: README, `docs/devpost.md` (flow status filled in), `docs/video-script.md`. **Record version A.**
-  - Left: the video and its YouTube URL (`docs/devpost.md`), screenshots, the Devpost submission.
+  **Never merge them.** The user approves and merges !4 on camera, then presses Run on `release-pages`. The agent reviews are posted (one per MR, plus incident issues #6–#8). **Never re-run !1–!4 pipelines and never post on them**: each run adds another note and issue.
+- [ ] Phase 6: submission package. Everything that doesn't need Long is done (2026-10-22):
+  - `docs/devpost-submit.md` (paste-ready form), `docs/long-checklist.md` (UI settings, pre-flight, YouTube, Devpost), `docs/video-script.md` (final version A).
+  - Screenshots in `docs/screenshots/` (logged out) and a 1500×1000 cover.
+  - Integrity Advisor agent created and enabled with GraphQL (item 1019155). Approval rule "Election official" created with REST (rule 89100755).
+  - **The REST API returns 403 for this role** on project merge checks and approval settings, so Long sets those in the UI (checklist step 0).
+  - **Until "Pipelines must succeed" is on, !1 to !3 are mergeable.**
+  - The repo flow YAML has a new backtick formatting rule (the !3 note broke on a bare `<script>`). The live flow still has the old prompt, because updating it with GraphQL was blocked by the auto-mode classifier. Long re-pastes it in the UI.
+  - Left for Long: the UI settings, the video, YouTube, the Devpost submission.
