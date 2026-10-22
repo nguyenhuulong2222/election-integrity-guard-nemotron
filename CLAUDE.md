@@ -108,12 +108,20 @@ Context for any Claude Code session working on this repository.
 - The docs still say "Maintainer" for these actions. If the UI refuses one, post the URL, action and exact error on issue #1.
 - Re-check the role at every gate: `glab api projects/87857590/members/all/43545862` (`access_level` and `member_role`).
 
-**Plan A (current).** Click-by-click steps are in `docs/duo-setup.md` (steps 0–4):
-1. Default Duo group = GitLab AI Hackathon (Preferences > AI assistance)
-2. AI > Flows > New flow (paste the YAML, Private)
-3. Managed > Enable, with Pipeline events (Passed, Failed) and Mention triggers
-4. Integrity Advisor agent
-5. Smoke test on !1
+**Plan A is live and verified (2026-10-22).**
+- **Flow:** "Election Integrity Guard" v1.0.0 in AI > Flows (Private). Service account: `ai-election-integrity-guard-gitlab-ai-hackathon`.
+- **Trigger 3136667: Pipeline events.** Filter: status in success/failed **and** source = `merge_request_event`. Claude added the source filter with GraphQL `aiFlowTriggerUpdate`, so scheduled `main` pipelines don't start sessions.
+- **Trigger 3136641:** auto-created on Enable. Mention, Assign and Assign reviewer. This is the manual re-review path.
+- **Trigger 3100701:** foundational Developer flow. Not ours; leave it.
+- **Verified results:**
+  - !1, !2, !3: one review note each, `integrity::block`, and incident issues #6, #7, #8
+  - !4: one note, `integrity::pass`
+- **Inspect sessions:** GraphQL `duoWorkflowWorkflows(projectPath:)`, then `duoWorkflowEvents(workflowId:)` for the checkpoint (`channel_values.ui_chat_log` holds the tool calls). Session titles are auto-generated, for example "Debug failed integrity job in MR 1".
+- **Don't re-run the demo MR pipelines casually.** Each run posts another review note and, on BLOCK, another incident issue.
+- **The UI copy of the flow must match the repo YAML.**
+  - The repo YAML validates against `flow_v2.json` (gitlab-org/gitlab `app/validators/json_schemas/ai_catalog/`).
+  - `max_cycles` is not allowed.
+- **Setup steps:** `docs/duo-setup.md`.
 
 **Flow security validation (fixed 2026-10-21, commit `ad2a939`).** GitLab's Duo Workflow Service validates every flow prompt with `PromptSecurity` (validate-only) and aborts with "Flow configuration failed security validation" if it finds:
 - HTML comments
@@ -152,7 +160,7 @@ It also strips those patterns from tool output. So **never use HTML comments in 
 - [x] Phase 1: repo foundation (approved, pushed)
 - [x] Phase 2: demo election site (approved, pushed)
 - [x] Phase 3: checker and CI (approved; pipelines green; site live at https://showcase-0b6166.gitlab.io; monitor schedule 4504749)
-- [x] Phase 4: Duo flow and agent (approved; repo parts done). UI parts are now doable with the Developer+ role (Plan A, see docs/duo-setup.md). Plan B cutoff (Thu Oct 22, 6pm HST) still applies if the UI refuses.
+- [x] Phase 4: Duo flow and agent. The flow is live and verified on all four demo MRs (Plan A). Plans B and C are no longer needed.
 - [x] Phase 5: demo scenario MRs (approved). They're left open on purpose:
   - !1 arithmetic error → BLOCK (issue #2)
   - !2 lookalike polling link → BLOCK (issue #3)
@@ -160,4 +168,6 @@ It also strips those patterns from tool output. So **never use HTML comments in 
   - !4 clean update 4 → PASS (issue #5)
 
   **Never merge them.** The user approves and merges !4 on camera, then presses Run on `release-pages`. Once the flow is enabled, re-run each MR pipeline (or mention the flow) to get the agent reviews.
-- [ ] Phase 6: submission package. Drafts are done: README, `docs/devpost.md`, `docs/video-script.md` (versions A and B). Nothing is recorded yet. Fill the `<!-- FILL -->` and `<!-- STATUS -->` markers once the flow status is known.
+- [ ] Phase 6: submission package.
+  - Done: README, `docs/devpost.md` (flow status filled in), `docs/video-script.md`. **Record version A.**
+  - Left: the video and its YouTube URL (`docs/devpost.md`), screenshots, the Devpost submission.

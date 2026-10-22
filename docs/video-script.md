@@ -4,7 +4,7 @@
 > **Audio:** voice only, no music (the rules ban copyrighted music; silence is safest). **Language:** English. **Resolution:** 1920×1080, browser zoom 125%, light mode.
 > Narration is about 320 words, roughly 2:10 at 150 words per minute. That leaves about 30 seconds for on-screen pauses, clicks and page loads.
 
-Two versions share most shots. Shots marked **A** are for the version where the flow is live through Maintainer (triggers fire automatically). Shots marked **B** are for Plan B, where the flow runs from the GitLab for VS Code flow builder. Record only the version that matches reality, and never show something that didn't happen.
+Two versions share most shots. **Record version A.** The flow went live on 2026-10-21 with the Developer+ role, and the Pipeline events trigger fires automatically. Shots marked **A** are for that version. Shots marked **B** are for Plan B, where the flow runs from the GitLab for VS Code flow builder. Record only the version that matches reality, and never show something that didn't happen.
 
 ---
 

@@ -80,7 +80,7 @@ In the demo, four MRs against the fictional "Kanaloa County Elections" site show
 - **Our hackathon role was Developer, not Maintainer.**
   - Branch rules, approval rules, protected environments, CI/CD variables, pipeline variables, and creating or triggering Duo flows all need Maintainer.
   - We redesigned around it: a manual release job as the human gate, a scheduled pipeline that needs no variables, and a Code Quality report so findings appear in the MR widget with no token.
-  - We documented every setting that should be on in production. <!-- FILL: how the flow was finally enabled (Maintainer granted on <date> / Plan B VS Code flow builder) -->
+  - We documented every setting that should be on in production. The Duo flow is enabled with the hackathon's "Developer+" custom role and fires on every finished MR pipeline (Pipeline events trigger, filtered to MR pipelines).
 - **GitLab Pages can't set response headers.** The CSP ships as a `<meta>` tag that the checker enforces, and we're upfront that `frame-ancestors` and HSTS can't be enforced this way.
 - **Our own pipeline caught our own bug.** The first demo MR pipelines failed in `verify`, because the unit tests read the live data that the MR was changing. We moved the tests to a frozen fixture and made security scans run even when the gate blocks. Both fixes are visible in the pipeline history.
 

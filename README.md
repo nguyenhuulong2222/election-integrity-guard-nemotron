@@ -159,9 +159,10 @@ Checker exit codes:
 1. **Copy the repo.** Push it to a GitLab project, then turn on Pages (Settings > General > Visibility).
 2. **Run CI.** The pipeline works with no CI/CD variables. Optionally, add `EIG_BOT_TOKEN` (a masked, protected project access token with the Reporter role and `api` scope) so the monitor opens incident issues as well as failing.
 3. **Create a pipeline schedule** on `main`, for example `*/30 * * * *`, with no variables. Every scheduled pipeline is a monitor run.
-4. **Turn on the Duo flow and agent.** This needs the Maintainer role; follow [`docs/duo-setup.md`](docs/duo-setup.md):
+4. **Turn on the Duo flow and agent.** This needs Maintainer, or a custom role with AI Catalog admin rights. Follow [`docs/duo-setup.md`](docs/duo-setup.md):
    - In AI > Flows, create the flow from [`.gitlab/duo/flows/integrity-review.yml`](.gitlab/duo/flows/integrity-review.yml), then enable it.
-   - In AI > Triggers, add **Pipeline events** (Passed, Failed) and **Mention**.
+   - In AI > Triggers, add **Pipeline events** (Passed, Failed). Enabling the flow also creates a trigger for Mention, Assign and Assign reviewer.
+   - Limit the pipeline trigger to MR pipelines (`object_attributes.source` = `merge_request_event`), so scheduled monitor runs don't start sessions.
    - Optionally, create the **Integrity Advisor** custom agent for Duo Chat ([`.gitlab/duo/agents/integrity-advisor.md`](.gitlab/duo/agents/integrity-advisor.md)).
 5. **Protect `main`.** Follow [`docs/ui-settings.md`](docs/ui-settings.md): protected `main`, code-owner approval, an approval rule, and "Pipelines must succeed".
 
@@ -169,11 +170,11 @@ Checker exit codes:
 
 - **CSP in a `<meta>` tag, so no `frame-ancestors`.** GitLab Pages can't set custom response headers, so the CSP ships as `<meta http-equiv>` on every page, and the checker enforces it. Browsers ignore `frame-ancestors` in a meta CSP, so clickjacking protection isn't possible on this hosting. A production deployment should serve the same policy as a real header, from a CDN or web server.
 - **No HSTS on `*.gitlab.io`.** HSTS is a response header the repository can't control. The monitor records the live headers on every run, rather than pretending to enforce them.
-- **The Developer role limited what could be enforced in this hackathon workspace.**
-  - Branch rules, approval rules, protected environments, CI/CD variables and pipeline variables all need Maintainer. So the human release gate is a **manual `release-pages` job**, not a protected-environment approval, and the agent-independent fallback is a **Code Quality report**, not CI-applied labels.
-  - "Pipelines must succeed" and code-owner approval are designed, documented and checked by the checker, but couldn't be switched on.
-  - Creating, enabling and triggering the Duo flow also needs Maintainer.
-  - <!-- STATUS: replace this bullet with "Enabled on <date> after Maintainer was granted" or "Shown via the VS Code flow builder (Plan B)" -->
+- **The participant role limited what could be enforced in this hackathon workspace.** The organizers give participants a "Developer+" custom role, not Maintainer.
+  - Protected branch rules, protected environments and project access tokens are out of reach. So the human release gate is a **manual `release-pages` job**, not a protected-environment approval, and the agent-independent fallback is a **Code Quality report**, not CI-applied labels.
+  - Code-owner approval needs protected-branch rights, so it is designed and documented but not switched on. "Pipelines must succeed" is a merge-request setting this role can change; see [`docs/ui-settings.md`](docs/ui-settings.md).
+  - **The Duo flow is live.** It was enabled on 2026-10-21 with the Developer+ role. A finished MR pipeline fires the Pipeline events trigger, and the flow posts one review note, sets the `integrity::*` label and opens an incident issue on BLOCK. It runs as its own service account, `ai-election-integrity-guard-gitlab-ai-hackathon`.
+  - The flow's notes and issues come from that service account, so the bot never acts as the human approver.
 - **Solo approver.** This is a one-person project, so the author also approves. In production, a separate election official is the required approver, "Prevent approval by author" stays on, and the Duo service account is never an eligible approver.
 - **Static checks only.** The checker reads the repository; it doesn't render pages or run JavaScript. Obfuscated script loaders inside an allowlisted same-origin file would rely on SAST and human review.
 

@@ -2,13 +2,24 @@
 
 This page explains how to turn on the Election Integrity Guard flow and the Integrity Advisor agent.
 
-**Status (2026-10-21, late):**
-- **Plan A is unblocked.** The organizers won't grant Maintainer (issue #1, note 4061769259). Instead, the owner's custom role **"Developer+"** (base Developer, set on the GitLab AI Hackathon group) supports "creating and enabling custom flows, configuring triggers, and managing merge request approval settings".
-- The membership API shows that role with these permissions:
+**Status (2026-10-22, verified end to end):**
+- **The flow is live.** "Election Integrity Guard" v1.0.0 (Private, managed by this project) is enabled. Its service account is `ai-election-integrity-guard-gitlab-ai-hackathon`.
+- **The working trigger is Pipeline events** (trigger 3136667):
+  - Filter: `object_attributes.status` in `success, failed`, plus `object_attributes.source` in `merge_request_event`. The source filter was added with the `aiFlowTriggerUpdate` GraphQL mutation, so the 30-minute monitor schedule on `main` doesn't start sessions.
+  - Results:
+    - !1, !2 and !3 each got one review note, `integrity::block`, and one incident issue (#6, #7, #8).
+    - !4 got one note and `integrity::pass`.
+    - Each session took about 90 seconds.
+- **Other triggers:**
+  - Enabling the flow auto-created trigger 3136641: Mention, Assign and Assign reviewer, for the same flow. Use it for a manual re-review: `@ai-election-integrity-guard-gitlab-ai-hackathon review`.
+  - Trigger 3100701 belongs to the foundational Developer flow. It's not ours, so leave it.
+- **Sessions:** AI > Sessions titles are generated automatically ("Debug failed integrity job in MR 1"). The session goal is the pipeline webhook payload, and the checkpoint shows the `integrity_reviewer` component and its tool calls.
+- **Role:** the owner's custom role **Developer+** (issue #1, note 4061769259).
   - granted: `admin_ai_catalog_item`, `admin_ai_catalog_item_consumer`, `manage_merge_request_settings`, `admin_cicd_variables`, `admin_web_hook`
   - not granted: `admin_protected_branch`, `admin_protected_environments`, `manage_project_access_tokens`
-- Built in the repository: the flow definition, the agent definition, the labels, and the CI report the flow reads.
-- **Fixed:** GitLab rejected the flow with "Flow configuration failed security validation", because flow prompts may not contain HTML comments. The review marker is now the visible line `EIG Duo review · pipeline <id>`. All prompt text in `.gitlab/duo/` passes GitLab's own sanitizers (`PromptSecurity`, validate-only).
+- **Fixes needed to get here:**
+  - The review marker is now visible text, because GitLab rejects HTML comments in flow prompts ("Flow configuration failed security validation").
+  - `max_cycles` was removed, because `flow_v2.json` doesn't allow it. The YAML validates against that schema (`gitlab-org/gitlab` `app/validators/json_schemas/ai_catalog/flow_v2.json`).
 
 ## What runs without the flow
 
@@ -46,7 +57,7 @@ Without a default namespace, "GitLab Duo Agentic Chat and the GitLab Duo Agent P
      - Display name: `Election Integrity Guard`
      - Description: "Reviews every election-site MR pipeline: explains the deterministic checker report in plain language, labels the MR, and opens an issue for BLOCK findings. Cannot merge, approve or deploy."
    - **Visibility & access:** **Private**
-3. Under **Configuration**, select **Flow**. Paste [`.gitlab/duo/flows/integrity-review.yml`](../.gitlab/duo/flows/integrity-review.yml) starting at `version: "v1"`, without the leading `#` comment block. That's about 6.3 KiB; the limit is 40 KiB.
+3. Under **Configuration**, select **Flow**. Don't add `max_cycles`, because the schema rejects it. Paste [`.gitlab/duo/flows/integrity-review.yml`](../.gitlab/duo/flows/integrity-review.yml) starting at `version: "v1"`, without the leading `#` comment block. That's about 6.3 KiB; the limit is 40 KiB.
 4. Select **Create flow**.
 
 ### 2. Enable the flow and add triggers
@@ -54,9 +65,7 @@ Without a default namespace, "GitLab Duo Agentic Chat and the GitLab Duo Agent P
 1. Go to **AI > Flows > Managed** tab and select **Election Integrity Guard**.
 2. Select **Enable** (upper right).
 3. **Project:** `showcase`.
-4. **Add triggers:**
-   - **Pipeline events**, with **Passed** and **Failed** selected
-   - **Mention**
+4. **Add triggers:** **Pipeline events**, with **Passed** and **Failed** selected. Mention, Assign and Assign reviewer are auto-created in a separate trigger.
 5. Select **Enable**. This also enables the flow in the top-level group and creates the service account `ai-<flow>-<group>` with the **Developer** role. Write down its username, because the mention trigger uses it.
 6. Check **AI > Triggers**. One trigger should be listed, with configuration source **AI Catalog**, flow Election Integrity Guard, and the flow's service account. If no trigger was created during Enable, use **New flow trigger** with the same conditions and service account, configuration source **AI Catalog**.
 
