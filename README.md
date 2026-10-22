@@ -7,7 +7,7 @@
 > Built for the GitLab Transcend Hackathon. Path A: all code is new, written in October 2026. Autonomy level: **Supervised**.
 > "Kanaloa County Elections" is **fictional**. Every county, candidate, number and domain in this repository is invented, and official links use the reserved `.example` domain.
 
-<!-- SCREENSHOT: hero, with the MR !3 widget showing BLOCK and the Duo review comment side by side -->
+![Election Integrity Guard: merge request, checker gate, agent review, human approval, release](docs/screenshots/cover.png)
 
 ## The problem
 
@@ -83,8 +83,10 @@ flowchart LR
 | [!3](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43545862/showcase/-/merge_requests/3) | "Add live visitor analytics to the results page" | **BLOCK** | Third-party script (ASSET-001), inline script (ASSET-002), and a CSP widened with a new host and `'unsafe-inline'` (CSP-002/003/004) |
 | [!4](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43545862/showcase/-/merge_requests/4) | "Publish results update 4 (11:45 pm tally)" | **PASS** | Nothing. Shares moved by less than 1 pp, and the code-owner approval note applies. |
 
-<!-- SCREENSHOT: Duo review comment on !2 (lookalike link) -->
-<!-- SCREENSHOT: Code Quality widget on !3 showing 5 blockers -->
+![Duo flow review on MR !2: BLOCK for a lookalike polling-place domain](docs/screenshots/mr2-duo-review.png)
+![Code Quality report for MR !3: five blockers from the checker](docs/screenshots/mr3-code-quality-report.png)
+
+More: [!1 review](docs/screenshots/mr1-duo-review.png) · [!4 PASS review](docs/screenshots/mr4-duo-review.png) · [!3 pipeline](docs/screenshots/mr3-pipeline.png) · [live site](docs/screenshots/site-home.png) · [results page](docs/screenshots/site-results.png)
 
 ## DevSecOps stages covered
 
