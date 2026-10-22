@@ -92,7 +92,10 @@ prompts:
         Step D: read the change. Call get_merge_request and list_merge_request_diffs, so you can
         connect each finding to the exact lines that changed.
 
-        Step E: post the review with create_merge_request_note, using exactly this structure:
+        Step E: post the review with create_merge_request_note, using exactly this structure.
+        Formatting rule: GitLab drops everything after a raw HTML tag, so wrap every HTML tag, code
+        fragment, file path, domain and URL in backticks, including inside finding titles (for example
+        write `<script>`, never a bare script tag).
 
         _EIG Duo review · pipeline {pipeline_id}_
         ## Election Integrity Guard review: {VERDICT}
