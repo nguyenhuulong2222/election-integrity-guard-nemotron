@@ -17,11 +17,12 @@
 **Image gallery** (upload in this order; all captured logged out, all data fictional):
 1. [`screenshots/cover.png`](screenshots/cover.png): cover, 1500×1000
 2. [`screenshots/mr2-duo-review.png`](screenshots/mr2-duo-review.png): Duo review on !2, lookalike domain BLOCK
-3. [`screenshots/mr3-code-quality-report.png`](screenshots/mr3-code-quality-report.png): five blockers on !3
-4. [`screenshots/mr1-duo-review.png`](screenshots/mr1-duo-review.png): arithmetic BLOCK on !1
-5. [`screenshots/mr4-duo-review.png`](screenshots/mr4-duo-review.png): PASS review on !4
-6. [`screenshots/mr3-pipeline.png`](screenshots/mr3-pipeline.png): `integrity` fails while the security scans pass
-7. [`screenshots/site-results.png`](screenshots/site-results.png): the fictional results page
+3. [`screenshots/mr3-duo-review.png`](screenshots/mr3-duo-review.png): Duo review on !3, five blockers explained (script tag and weakened CSP)
+4. [`screenshots/mr3-code-quality-report.png`](screenshots/mr3-code-quality-report.png): five blockers on !3 in Code Quality
+5. [`screenshots/mr1-duo-review.png`](screenshots/mr1-duo-review.png): arithmetic BLOCK on !1
+6. [`screenshots/mr4-duo-review.png`](screenshots/mr4-duo-review.png): PASS review on !4
+7. [`screenshots/mr3-pipeline.png`](screenshots/mr3-pipeline.png): `integrity` fails while the security scans pass
+8. [`screenshots/site-results.png`](screenshots/site-results.png): the fictional results page
 
 ---
 

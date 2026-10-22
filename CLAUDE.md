@@ -175,4 +175,7 @@ It also strips those patterns from tool output. So **never use HTML comments in 
   - **The REST API returns 403 for this role** on project merge checks and approval settings, so Long sets those in the UI (checklist step 0).
   - **Until "Pipelines must succeed" is on, !1 to !3 are mergeable.**
   - The repo flow YAML has a new backtick formatting rule (the !3 note broke on a bare `<script>`). The live flow still has the old prompt, because updating it with GraphQL was blocked by the auto-mode classifier. Long re-pastes it in the UI.
-  - Left for Long: the UI settings, the video, YouTube, the Devpost submission.
+  - **UI settings done and verified (2026-10-22).** Merge checks: pipelines must succeed and threads must be resolved. The author can approve. The live flow was re-pasted.
+    - !1–!3 fail `CI_MUST_PASS` and `NOT_APPROVED`. !4 fails only `NOT_APPROVED`, and you can approve it.
+  - **!3 was re-reviewed with a mention:** note 4066319396 renders fully. Duplicate incident issue #9 is closed; #8 is kept. Claude resolved the mention thread.
+  - Left for Long: the video, YouTube, the Devpost submission.

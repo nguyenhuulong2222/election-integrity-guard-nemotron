@@ -8,24 +8,24 @@ Project: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43545862/
 
 The REST API refused these with 403, so they're UI-only. Set them once:
 
-1. **Settings > Merge requests > Merge checks:**
+1. ✅ Done 2026-10-22. **Settings > Merge requests > Merge checks:**
    - **Pipelines must succeed:** ON
    - **All threads must be resolved:** ON
 
    Without "Pipelines must succeed", !1 to !3 are mergeable today, and shot 5 depends on it.
-2. **Settings > Merge requests > Merge request approvals > Approval settings:**
+2. ✅ Done 2026-10-22. **Settings > Merge requests > Merge request approvals > Approval settings:**
    - **Prevent approval by author:** OFF
    - **Remove all approvals when commits are added:** ON
 
    Then **Save changes**. The "Election official" rule (1 approval, you as approver) already exists. Without this, Approve is missing on !4, and you'd use the backup line.
-3. **AI > Flows > Election Integrity Guard > Edit:** paste `.gitlab/duo/flows/integrity-review.yml` from the repo (the whole file) and save. This adds the backtick formatting rule for future reviews. It doesn't change the existing notes.
+3. ✅ Done 2026-10-22. **AI > Flows > Election Integrity Guard > Edit:** paste `.gitlab/duo/flows/integrity-review.yml` from the repo (the whole file) and save. This adds the backtick formatting rule for future reviews. It doesn't change the existing notes.
 4. Optional, to test the agent: open MR !3, open **GitLab Duo Chat** (right sidebar), choose the **Integrity Advisor** agent and ask "Why was !3 blocked?". It's read-only and posts nothing on the MR.
 
 ## 1. Pre-flight (5 minutes before recording)
 
 - [ ] **!1, !2 and !3 can't be merged:** the merge widget says the pipeline must succeed.
 - [ ] **!4:** pipeline green, `integrity::pass`, no unresolved threads, Approve visible (or plan the backup line), Merge available after approval.
-- [ ] Each of !1 to !4 has exactly one "EIG Duo review · pipeline" note. **Do not re-run their pipelines.**
+- [ ] !1, !2 and !4 have one "EIG Duo review · pipeline" note each. !3 has two; record the newer one (09:07). **Do not re-run their pipelines.**
 - [ ] The live site shows **Update 3** at https://showcase-0b6166.gitlab.io/.
 - [ ] Build > Pipeline schedules: the latest "integrity monitor" pipeline is green.
 - [ ] Open the 9 tabs listed in `docs/video-script.md`.

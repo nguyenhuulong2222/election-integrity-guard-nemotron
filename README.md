@@ -86,7 +86,7 @@ flowchart LR
 ![Duo flow review on MR !2: BLOCK for a lookalike polling-place domain](docs/screenshots/mr2-duo-review.png)
 ![Code Quality report for MR !3: five blockers from the checker](docs/screenshots/mr3-code-quality-report.png)
 
-More: [!1 review](docs/screenshots/mr1-duo-review.png) · [!4 PASS review](docs/screenshots/mr4-duo-review.png) · [!3 pipeline](docs/screenshots/mr3-pipeline.png) · [live site](docs/screenshots/site-home.png) · [results page](docs/screenshots/site-results.png)
+More: [!1 review](docs/screenshots/mr1-duo-review.png) · [!3 review](docs/screenshots/mr3-duo-review.png) · [!4 PASS review](docs/screenshots/mr4-duo-review.png) · [!3 pipeline](docs/screenshots/mr3-pipeline.png) · [live site](docs/screenshots/site-home.png) · [results page](docs/screenshots/site-results.png)
 
 ## DevSecOps stages covered
 

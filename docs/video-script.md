@@ -11,7 +11,7 @@ Everything shown really happened: the Election Integrity Guard flow ran from its
 ## Tabs to open, in this order
 
 1. Live site, results page: https://showcase-0b6166.gitlab.io/results.html
-2. MR !3, Overview tab, scrolled to the Election Integrity Guard review
+2. MR !3, Overview tab, scrolled to the **newest** Election Integrity Guard review (09:07, after the "@… review" mention; it lists all five blockers)
 3. Pipeline #2975541950, **Code Quality** tab (!3's five blockers)
 4. MR !1, Overview tab (merge widget visible)
 5. MR !4, Overview tab
@@ -51,5 +51,5 @@ Everything shown really happened: the Election Integrity Guard flow ran from its
 
 - Say "fictional" in shot 1. The banner is visible in shots 1 and 9.
 - Don't re-run pipelines on !1 to !3 before recording. Each run posts another review and opens another incident issue.
-- The !3 review stops rendering after "ASSET-002: Inline", because the agent wrote a bare `<script>` tag that GitLab's Markdown sanitizer drops. Show the top of the note (ASSET-001) and use the Code Quality tab for the full list. The prompt is fixed in the repo for future runs.
+- !3 has two reviews. The first (08:38) stops rendering at "ASSET-002: Inline", because of a bare `<script>` tag. The second (09:07, after the mention) uses the fixed prompt and renders fully. Show only the second.
 - Don't show tokens, terminal sessions or browser autofill.

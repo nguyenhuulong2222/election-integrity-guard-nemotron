@@ -51,7 +51,7 @@ gitlab, gitlab-duo-agent-platform, gitlab-ci, gitlab-pages, gitlab-sast, python,
 
 ## Image gallery
 
-Upload [`screenshots/cover.png`](screenshots/cover.png) first; it's 1500×1000 (3:2). Then upload the six images listed in [`devpost.md`](devpost.md), in order.
+Upload [`screenshots/cover.png`](screenshots/cover.png) first; it's 1500×1000 (3:2). Then upload the seven images listed in [`devpost.md`](devpost.md), in order.
 
 ## Stage coverage (for "Most Stages Covered")
 
