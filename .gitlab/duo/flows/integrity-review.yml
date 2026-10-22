@@ -37,7 +37,6 @@ components:
       - "create_merge_request_note"
       - "update_merge_request"
       - "create_issue"
-    max_cycles: 40
     ui_log_events:
       - "on_agent_final_answer"
       - "on_tool_execution_success"
