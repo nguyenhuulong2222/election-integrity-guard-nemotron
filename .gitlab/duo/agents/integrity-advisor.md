@@ -1,6 +1,6 @@
 # Custom agent: Integrity Advisor
 
-Create it in **AI > Agents > New agent**. This needs the Maintainer role.
+Create it in **AI > Agents > New agent**, or with the `aiCatalogAgentCreate` GraphQL mutation. It needs Maintainer, or a custom role with `admin_ai_catalog_item`.
 
 Docs: https://docs.gitlab.com/user/duo_agent_platform/agents/custom/. The form has these fields: display name, description, visibility, system prompt, and tools. Tool names come from https://docs.gitlab.com/user/duo_agent_platform/agents/tools/.
 
@@ -26,7 +26,7 @@ All tools are read-only.
 - List Merge Request Diffs (`list_merge_request_diffs`)
 - List All Merge Request Notes (`list_all_merge_request_notes`)
 - Get Job Logs (`get_job_logs`)
-- GitLab API Get (`gitlab_api_get`)
+- Get Pipeline Failing Jobs (`get_pipeline_failing_jobs`)
 - Get Repository File (`get_repository_file`)
 
 ## System prompt
@@ -49,8 +49,10 @@ How the system works, which you explain when asked:
 When answering about a specific MR:
 1. Read the MR (get_merge_request) and the latest Election Integrity Guard review note
    (list_all_merge_request_notes; look for "EIG Duo review · pipeline").
-2. If needed, read the checker report: gitlab_api_get
-   /api/v4/projects/{project_id}/jobs/{integrity_job_id}/artifacts/eig-report.json, or the job log.
+2. If needed, read the checker report: find the failed "integrity" job with get_pipeline_failing_jobs
+   on the MR's head pipeline, then get_job_logs and read the JSON between
+   "----- EIG-REPORT-JSON-BEGIN -----" and "----- EIG-REPORT-JSON-END -----".
+   For rule meanings, read README.md or config/policy.json with get_repository_file.
 3. Read the diff (list_merge_request_diffs) to point at the exact lines.
 4. Answer in plain English: what the finding is, why it matters to voters, and exactly what a person
    should check before approving. Cite rule IDs, files and lines from the report. Never invent them.

@@ -16,18 +16,19 @@ Some protections can only be set in the GitLab UI. Each item says which phase ne
   - Allowed to push and merge: **Maintainers** _(temporary, so Phases 2–4 can push directly)_
   - Allowed to force push: **off**
   - Code owner approval: **off for now.** With it on, GitLab *denies direct pushes to the protected branch when a CODEOWNERS rule matches* ([docs](https://docs.gitlab.com/user/project/repository/branches/protected/#require-code-owner-approval)), and Phases 2–4 push directly to code-owned paths. It is switched on before Phase 5.
-- [ ] **Merge request approvals.** Settings > Merge requests > Merge request approvals: **(blocked: needs Maintainer)**
-  - Approval rule "Election official": **1** approval required, eligible approvers = Maintainers (you)
+- [ ] **Merge request approvals.** Settings > Merge requests > Merge request approvals:
+  - [x] Approval rule "Election official": **1** approval required, approver = the owner. _(Created with the API on 2026-10-22, rule 89100755.)_
+  - [ ] Approval settings: **UI only**, because the REST API returns 403 for this role.
   - Approval settings:
     - **Prevent approval by author: OFF** (demo only, see below)
     - Prevent approvals by users who add commits: OFF (demo only)
     - Remove all approvals when commits are added: **ON**
-- [ ] **Merge checks.** Settings > Merge requests: **All threads must be resolved: ON**. _("Pipelines must succeed" waits until Phase 3.)_ **(blocked: needs Maintainer)**
+- [ ] **Merge checks.** Settings > Merge requests: **All threads must be resolved: ON**. **UI only:** the REST API returns 403 for this role.
 - [x] **Pages.** Already turned on (API `pages_access_level: enabled`). The first deploy happens in Phase 3.
 
 ## After Phase 3 (once CI exists)
 
-- [ ] **Merge checks.** Settings > Merge requests: **Pipelines must succeed: ON**. **(blocked: needs Maintainer)**
+- [ ] **Merge checks.** Settings > Merge requests: **Pipelines must succeed: ON**. **UI only:** the REST API returns 403. **Required for the video:** without it, !1 to !3 are mergeable.
 
 ## Before Phase 5 (demo MRs)
 
@@ -65,5 +66,5 @@ Some protections can only be set in the GitLab UI. Each item says which phase ne
 - [ ] **Create triggers.** AI > Triggers > New flow trigger: **(blocked: needs Maintainer)**
   - Pipeline events: Passed, Failed
   - Mention
-- [ ] **Create the custom agent** "Integrity Advisor" (AI > Agents > New agent) from `.gitlab/duo/agents/integrity-advisor.md`.
+- [x] **Create the custom agent** "Integrity Advisor" from `.gitlab/duo/agents/integrity-advisor.md`. _(Created and enabled with GraphQL on 2026-10-22: item 1019155, consumer 12958692.)_
 - [x] **Pipeline schedule** "integrity monitor" (ID 4504749, `*/30 * * * *`, `main`, no variables). Created with the API on 2026-10-21. The first run, pipeline #2973392233, was green. _(Developer can do this.)_

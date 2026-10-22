@@ -71,6 +71,12 @@ Without a default namespace, "GitLab Duo Agentic Chat and the GitLab Duo Agent P
 
 ### 3. Create the custom agent
 
+**Done with GraphQL (2026-10-22):** `aiCatalogAgentCreate` (Private, released) made item 1019155, and `aiCatalogItemConsumerCreate` enabled it in this project (consumer 12958692).
+- `gitlab_api_get` isn't offered for custom agents, so the agent uses `get_pipeline_failing_jobs` and `get_job_logs` instead.
+- Custom agents run only in Duo Chat. The session API rejects them with "Item must be a flow type". To test it, open an MR, then Duo Chat, then choose Integrity Advisor.
+
+Manual route:
+
 Follow [`.gitlab/duo/agents/integrity-advisor.md`](../.gitlab/duo/agents/integrity-advisor.md): create it, select **Enable**, then choose this project.
 
 ### 4. Smoke test
