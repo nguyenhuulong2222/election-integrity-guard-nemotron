@@ -1,7 +1,8 @@
 # Video script: Election Integrity Guard (version A, final; target 2:40, hard limit 2:45)
 
 > `[CAPTURE: ...]` marks a screen to record.
-> **Audio:** voice only, no music. **Language:** English. **Resolution:** 1920×1080, browser zoom 125%, logged in as yourself.
+> **Audio:** AI narration (OpenAI `gpt-4o-mini-tts`, voice marin), no music, −16 LUFS. **Language:** English. **Resolution:** 1920×1080, browser zoom 125%.
+> **How it was made:** every shot was recorded logged out with Playwright (tools in the git-ignored `video/tools/`). !4 was approved, merged and released on 2026-10-23 before shots 7–9 were recorded, so those shots show the finished result.
 > Narration is about 330 words, roughly 2:12 at 150 words per minute, which leaves about 30 seconds for clicks and page loads.
 
 Everything shown really happened: the Election Integrity Guard flow ran from its Pipeline events trigger on 2026-10-22 and reviewed !1 to !4. Pre-flight checks are in [`long-checklist.md`](long-checklist.md).
@@ -26,19 +27,19 @@ Everything shown really happened: the Election Integrity Guard flow ran from its
 
 | # | Time | Screen and clicks | Narration |
 |---|---|---|---|
-| 1 | 0:00–0:12 | **Tab 1** live results page. Slow scroll; the yellow "Fictional demo data" band stays visible. | "This is a county election results page. The county is fictional, but the risk is real: whatever merges here is what voters see on election night." |
-| 2 | 0:12–0:24 | Stay on tab 1, pointing at the Mayor totals. | "One merge can publish impossible totals, send voters to a lookalike polling-place site, or slip in a third-party script. In a three-line diff at 11 p.m., nobody sees one hyphen." |
-| 3 | 0:24–0:50 | **Tab 2** MR !3. Show the `integrity::block` label, then the review note from **Election Integrity Guard**: "BLOCK", "What this means", the ASSET-001 finding. | "Election Integrity Guard is a supervised GitLab Duo workflow. A deterministic checker runs in CI. When the pipeline finishes, our custom Duo flow starts automatically, reads the checker report and the diff, and writes this review for an election official. Here, an 'analytics tag' loads code from an outside company onto the results page." |
-| 4 | 0:50–1:04 | **Tab 3** Code Quality tab: five Blocker rows (ASSET-001, ASSET-002, CSP-002/003/004). | "The checker found five blockers, including a Content Security Policy loosened to let that script run. The flow labelled the MR and opened an incident issue for a human to triage." |
-| 5 | 1:04–1:20 | **Tab 4** MR !1: the merge widget shows the merge is blocked because the pipeline failed. Then hover the `integrity::block` label. | "A 'recount' that adds 1,500 votes to one candidate but not to the total. The pipeline failed, so GitLab won't let anyone merge it. The same holds for the lookalike link and the script. The agent explains; the gate is code." |
-| 6 | 1:20–1:36 | **Tab 5** MR !4: green pipeline, `integrity::pass` label, the review "PASS" with its advisory notes. | "Results update four passes. Duo says so, adds the totals it checked, and reminds the approver that a person still decides." |
-| 7 | 1:36–1:56 | Still on !4: click **Approve**, then **Merge**. | "I review it as the election official, approve it, and merge. The agent has no merge, approve or deploy tool, and its service account can't push to main." |
-| 8 | 1:56–2:12 | **Tab 6** Build > Pipelines → refresh → open the new `main` pipeline → press **Run** (▶) on `release-pages` → wait for the job to start. | "Merging isn't publishing. The release job waits for a human to press Run." |
-| 9 | 2:12–2:22 | **Tab 7** live site home, reload: "Update 4, Tue, Nov 3, 11:45 PM HST". | "Update four is live." |
-| 10 | 2:22–2:32 | **Tab 8** Pipeline schedules "integrity monitor" → latest pipeline (green) → `monitor` job log "No drift". | "Every thirty minutes, a scheduled pipeline compares every live file's hash with the reviewed commit. Tampering after release turns it red." |
-| 11 | 2:32–2:42 | **Tab 9** README "DevSecOps stages covered" table, slow scroll. | "Plan, create, verify, secure, package, release, configure, monitor and govern, all in GitLab. Code enforces. Duo explains. People decide." |
+| 1 | 0:00–0:11 | **Tab 1** live results page. Slow scroll; the yellow "Fictional demo data" band stays visible. | "This is a county election results page. The county is fictional, but the risk is real: whatever merges here is what voters see on election night." |
+| 2 | 0:11–0:24 | Stay on tab 1, pointing at the Mayor totals. | "One merge can publish impossible totals, send voters to a lookalike polling-place site, or slip in a third-party script. In a three-line diff at 11 p.m., nobody sees one hyphen." |
+| 3 | 0:24–0:48 | **Tab 2** MR !3. Show the `integrity::block` label, then the review note from **Election Integrity Guard**: "BLOCK", "What this means", the ASSET-001 finding. | "Election Integrity Guard is a supervised GitLab Duo workflow. A deterministic checker runs in CI. When the pipeline finishes, our custom GitLab Duo Agent Platform flow starts automatically, reads the checker report and the diff, and writes this review for an election official. Here, an 'analytics tag' loads code from an outside company onto the results page." |
+| 4 | 0:48–1:01 | **Tab 3** Code Quality tab: five Blocker rows (ASSET-001, ASSET-002, CSP-002/003/004). | "The checker found five blockers, including a Content Security Policy loosened to let that script run. The flow labelled the MR and opened an incident issue for a human to triage." |
+| 5 | 1:01–1:18 | **Tab 4** MR !1: the merge widget shows the merge is blocked because the pipeline failed. Then hover the `integrity::block` label. | "A 'recount' that adds 1,500 votes to one candidate but not to the total. The pipeline failed, so GitLab won't let anyone merge it. The same holds for the lookalike link and the script. The agent explains; the gate is code." |
+| 6 | 1:18–1:28 | **Tab 5** MR !4: green pipeline, `integrity::pass` label, the review "PASS" with its advisory notes. | "Results update four passes. Duo says so, adds the totals it checked, and reminds the approver that a person still decides." |
+| 7 | 1:28–1:38 | MR !4 after the merge: "Merged" status, then the activity entries "approved this merge request" and "merged" by Long Huu Nguyen. | "After review, the election official approves and merges update four. The agent has no merge, approve or deploy tool, and its service account can't push to main." |
+| 8 | 1:38–1:46 | The `main` pipeline for the merge commit, `release-pages` passed, then the job page showing the manual job was started by Long Huu Nguyen. | "Merging isn't publishing. The release job is manual — it ran only when the official started it." |
+| 9 | 1:46–1:50 | **Tab 7** live site home, reload: "Update 4, Tue, Nov 3, 11:45 PM HST". | "Update four is live." |
+| 10 | 1:50–2:01 | **Tab 8** Pipeline schedules "integrity monitor" → latest pipeline (green) → `monitor` job log "No drift". | "Every thirty minutes, a scheduled pipeline compares every live file's hash with the reviewed commit. Tampering after release turns it red." |
+| 11 | 2:01–2:14 | **Tab 9** README "DevSecOps stages covered" table, slow scroll. | "Plan, create, verify, secure, package, release, configure, monitor and govern, all in GitLab. Code enforces. Duo explains. People decide." |
 
-**Total: 2:42.** If you run long, cut shot 2 to 8 seconds, then shorten shot 10.
+**Total: 2:14** (final export, 2026-10-23). Times above are from the exported video.
 
 ### Backup lines
 

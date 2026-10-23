@@ -43,6 +43,12 @@ https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43545862/showcase
 https://youtu.be/REPLACE_ME
 ```
 
+YouTube description, add this line:
+
+```
+Narration voice is AI-generated (OpenAI TTS).
+```
+
 ## Built with (tags)
 
 ```

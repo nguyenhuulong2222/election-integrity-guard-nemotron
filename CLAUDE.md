@@ -167,7 +167,7 @@ It also strips those patterns from tool output. So **never use HTML comments in 
   - !3 injected script and weakened CSP → BLOCK (issue #4)
   - !4 clean update 4 → PASS (issue #5)
 
-  **Never merge them.** The user approves and merges !4 on camera, then presses Run on `release-pages`. The agent reviews are posted (one per MR, plus incident issues #6–#8). **Never re-run !1–!4 pipelines and never post on them**: each run adds another note and issue.
+  **Never merge !1–!3.** !4 was approved and merged on 2026-10-23 with the user's one-time authorization (merge commit `705b2e33`), and `release-pages` was played (job 17428163134, pipeline 2982864264). The live site shows Update 4. The agent reviews are posted (one per MR, plus incident issues #6–#8). **Never re-run !1–!4 pipelines and never post on them**: each run adds another note and issue.
 - [ ] Phase 6: submission package. Everything that doesn't need Long is done (2026-10-22):
   - `docs/devpost-submit.md` (paste-ready form), `docs/long-checklist.md` (UI settings, pre-flight, YouTube, Devpost), `docs/video-script.md` (final version A).
   - Screenshots in `docs/screenshots/` (logged out) and a 1500×1000 cover.
@@ -178,4 +178,5 @@ It also strips those patterns from tool output. So **never use HTML comments in 
   - **UI settings done and verified (2026-10-22).** Merge checks: pipelines must succeed and threads must be resolved. The author can approve. The live flow was re-pasted.
     - !1–!3 fail `CI_MUST_PASS` and `NOT_APPROVED`. !4 fails only `NOT_APPROVED`, and you can approve it.
   - **!3 was re-reviewed with a mention:** note 4066319396 renders fully. Duplicate incident issue #9 is closed; #8 is kept. Claude resolved the mention thread.
-  - Left for Long: the video, YouTube, the Devpost submission.
+  - **Video built (2026-10-23):** `video/election-integrity-guard-demo.mp4` (2:14, git-ignored). Playwright-recorded, logged out; narration is OpenAI TTS (marin), key in Keychain service `openai-api-key`. Rebuild tools in `video/tools/`.
+  - Left for Long: YouTube upload, the Devpost submission.

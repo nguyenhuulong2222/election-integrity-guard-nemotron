@@ -32,3 +32,4 @@ gl-*-report.json
 
 # Site build output (copied from results/ by the package job)
 public/data/
+video/
