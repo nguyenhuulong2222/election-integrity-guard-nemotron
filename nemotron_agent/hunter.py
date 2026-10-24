@@ -85,11 +85,13 @@ def _coverage(data: dict, items: list) -> Optional[str]:
 
 
 def gather(queries=QUERIES, watchlist=()) -> tuple:
-    """Run Tavily. Returns (items, searches, errors); items carry url, title, text, source."""
-    items, searches, errors = [], [], []
+    """Run Tavily. Returns (items, searches, errors, records); items carry url, title, text, source,
+    records are the usage records of the Tavily calls."""
+    items, searches, errors, records = [], [], [], []
     if watchlist:
         try:
             res = tavily.extract(list(watchlist))
+            records.append(res["_record"])
             searches.append({"extract": len(watchlist), "results": len(res.get("results", [])),
                              "failed": [f.get("url") for f in res.get("failed_results", [])],
                              "latency_ms": res["_record"].latency_ms})
@@ -98,9 +100,11 @@ def gather(queries=QUERIES, watchlist=()) -> tuple:
                               "source": "watchlist (Tavily Extract)"})
         except tavily.TavilyError as exc:
             errors.append(str(exc))
+            records.extend([exc.record] if exc.record else [])
     for q in queries:
         try:
             res = tavily.search(q)
+            records.append(res["_record"])
             searches.append({"query": q, "results": len(res.get("results", [])),
                              "latency_ms": res["_record"].latency_ms})
             for r in res.get("results", []):
@@ -108,6 +112,7 @@ def gather(queries=QUERIES, watchlist=()) -> tuple:
                               "source": f"search: {q}"})
         except tavily.TavilyError as exc:
             errors.append(str(exc))
+            records.extend([exc.record] if exc.record else [])
     seen, unique = set(), []
     for it in items:  # one entry per URL; watchlist extracts come first, so full text wins over a snippet
         if it["url"] in seen:
@@ -117,7 +122,7 @@ def gather(queries=QUERIES, watchlist=()) -> tuple:
     for it in unique:
         it["demo_decoy"] = DECOY_BANNER in it["text"]
         it["text"] = it["text"].replace(DECOY_BANNER, "").strip()
-    return unique, searches, errors
+    return unique, searches, errors, records
 
 
 def run(client: Optional[NemotronClient] = None, queries=QUERIES, watchlist=(),
@@ -125,10 +130,10 @@ def run(client: Optional[NemotronClient] = None, queries=QUERIES, watchlist=(),
     client = client or NemotronClient()
     certified = certified or multilingual.load_certified()
     progress("tavily", "running", f"{len(queries)} searches, {len(watchlist)} watchlist URLs")
-    items, searches, errors = gathered or gather(queries, watchlist)
+    items, searches, errors, *rest = gathered or gather(queries, watchlist)
     progress("tavily", "done" if items else "error", f"{len(items)} unique results")
     out = {"queries": list(queries), "watchlist": list(watchlist), "searches": searches, "items": [],
-           "findings": [], "report_md": None, "errors": list(errors), "calls": []}
+           "findings": [], "report_md": None, "errors": list(errors), "calls": list(rest[0] if rest else [])}
     for i, it in enumerate(items):
         it["id"] = f"r{i + 1}"
         it["mentions_county"] = "kanaloa" in (it["title"] + " " + it["text"]).lower()

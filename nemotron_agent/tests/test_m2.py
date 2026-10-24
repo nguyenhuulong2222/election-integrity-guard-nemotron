@@ -112,6 +112,19 @@ class HunterTest(unittest.TestCase):
         self.assertEqual(len(fake.sent), 4)
         self.assertIn("skipped 1 of 2", fake.sent[1]["messages"][-1]["content"])
 
+    def test_tavily_calls_are_reported_with_the_model_calls(self):
+        from unittest import mock
+        from nemotron_agent.llm import CallRecord
+        rec = CallRecord("tavily_search", "tavily", "tavily/search", 0, 1, 0, 400, 0.0, True, 1)
+        page = {"url": "https://www.example-state.gov/vote", "title": "x", "content": "Election info."}
+        with mock.patch("nemotron_agent.tavily.search", return_value={"results": [page], "_record": rec}):
+            items, searches, errors, records = hunter.gather(queries=("q",), watchlist=())
+        self.assertEqual(records, [rec])
+        triage = {"items": [{"id": "r1", "about_county": False, "category": "unrelated", "reason": "x"}]}
+        out = hunter.run(NemotronClient(FakeTransport(triage)), queries=("q",),
+                         gathered=(items, searches, errors, records))
+        self.assertEqual([c.role for c in out["calls"]], ["tavily", "fast"])
+
     def test_lookalike_hosts(self):
         self.assertEqual(hunter.lookalike_hosts("go to kanaloacounty.example or registro-kanaloacounty.example"),
                          ["registro-kanaloacounty.example"])

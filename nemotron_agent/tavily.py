@@ -19,7 +19,9 @@ TIMEOUT_S = 40.0
 
 
 class TavilyError(RuntimeError):
-    pass
+    def __init__(self, message: str, record=None):
+        super().__init__(message)
+        self.record = record
 
 
 def _post(path: str, body: dict, task: str) -> dict:
@@ -43,7 +45,7 @@ def _post(path: str, body: dict, task: str) -> dict:
                      error is None, 1, error)
     _write_usage(rec)
     if error:
-        raise TavilyError(f"{task}: {error}")
+        raise TavilyError(f"{task}: {error}", rec)
     data["_record"] = rec
     return data
 
