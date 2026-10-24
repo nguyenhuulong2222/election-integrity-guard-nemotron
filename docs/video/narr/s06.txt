@@ -1,0 +1,1 @@
+Voters read in many languages. Nemotron Lightning extracts the facts from English, Vietnamese, Spanish and Tagalog pages in parallel, each backed by a verbatim quote. Code compares them with the certified calendar. Super explains the impact: a Tagalog reader would arrive a day late, and a Vietnamese reader would visit a lookalike site. It drafts fixes for a human translator.

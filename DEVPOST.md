@@ -139,6 +139,8 @@ Everything here was observed while building; the dated log is in `docs/nebius-fe
 
 Record the deployed demo at https://eig-nemotron.onrender.com, logged out, at a 1920×1080 desktop size. Open the site once before recording, because Render's free tier needs about 30–60 s to wake up. The narration is about 350 words. Use no music. If the voice is AI-generated, say so in the YouTube description.
 
+The recorded video follows this script; the exact narration is in `docs/video/narr/s01.txt`–`s08.txt`, and `docs/video/tools/` rebuilds it (AI narration per shot, frame-by-frame capture of the deployed site including two live runs, ffmpeg assembly).
+
 | Time | On screen | Narration |
 |---|---|---|
 | 0:00–0:15 | Demo home page; "Fictional demo data" banner; slowly hover over the three model chips | "After an election, the results page is the most trusted page in a county, and it runs on an ordinary website. This is the Nemotron Integrity Agent, guarding a fictional county's election site with NVIDIA Nemotron on Nebius Token Factory." |

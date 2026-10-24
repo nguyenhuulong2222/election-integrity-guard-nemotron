@@ -1,0 +1,1 @@
+Rule one: detection is deterministic. The Results Seal is a SHA-256 hash of the certified results. Here, someone moved sixteen hundred votes between two candidates and kept every total consistent, so the arithmetic checks pass. The hash catches it anyway, with no AI involved.

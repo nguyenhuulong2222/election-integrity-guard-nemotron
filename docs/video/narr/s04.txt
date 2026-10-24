@@ -1,0 +1,1 @@
+Nemotron Ultra drafts the incident report. Every call shows its model, tokens, latency and cost. This whole run cost under a cent.

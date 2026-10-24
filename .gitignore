@@ -32,7 +32,14 @@ gl-*-report.json
 
 # Site build output (copied from results/ by the package job)
 public/data/
-video/
+/video/
 
 # Nemotron agent usage log (tokens/cost per call, local only)
 nemotron_agent/logs/
+
+# Nemotron demo video build output (large); the tools and narration text are kept
+docs/video/*
+!docs/video/tools/
+!docs/video/narr/
+docs/video/narr/*
+!docs/video/narr/*.txt

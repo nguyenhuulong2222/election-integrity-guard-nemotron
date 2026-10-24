@@ -1,0 +1,1 @@
+Not every change is an attack. A documented canvass-board correction goes to an official for sign-off, never automatic approval. A change whose ticket can't be verified goes to a person. Nothing is ever silently accepted.

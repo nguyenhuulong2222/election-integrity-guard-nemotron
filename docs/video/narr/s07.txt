@@ -1,0 +1,1 @@
+Misinformation lives elsewhere. Tavily searches the live web and extracts our watchlist. Lightning triages every result, and code makes sure a page that never mentions the county is never accused. Super reports the two labeled demo decoys, citing their URLs: a fake Election Day in English, and a wrong closing time with a lookalike registration site in Spanish.
