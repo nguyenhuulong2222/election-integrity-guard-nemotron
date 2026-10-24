@@ -1,0 +1,2 @@
+# Nemotron Integrity Agent (nemotron_agent/). The checker itself stays stdlib-only.
+openai==3.37.0

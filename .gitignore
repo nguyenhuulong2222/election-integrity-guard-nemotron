@@ -33,3 +33,6 @@ gl-*-report.json
 # Site build output (copied from results/ by the package job)
 public/data/
 video/
+
+# Nemotron agent usage log (tokens/cost per call, local only)
+nemotron_agent/logs/
