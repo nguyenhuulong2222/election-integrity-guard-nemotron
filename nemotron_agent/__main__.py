@@ -3,6 +3,9 @@
   python -m nemotron_agent models                  check configured model ids and prices live
   python -m nemotron_agent triage --case ID|PATH   run one tamper-triage fixture end to end
   python -m nemotron_agent triage --live URL|PATH [--certified PATH] [--meta PATH]
+  python -m nemotron_agent multilingual [--scenario consistent|drift]
+  python -m nemotron_agent hunt [--watch URL ...]
+  python -m nemotron_agent serve [--port 8000]
 """
 
 from __future__ import annotations
@@ -102,6 +105,68 @@ def cmd_triage(args) -> int:
     return 0
 
 
+def cmd_multilingual(args) -> int:
+    from . import multilingual
+    out = multilingual.run(multilingual.load_pages(args.scenario), NemotronClient())
+    if args.json:
+        print(json.dumps({**out, "calls": [c.__dict__ for c in out["calls"]]}, indent=2, ensure_ascii=False))
+        return 0
+    print(f"Scenario: {args.scenario}")
+    for lang, data in out["languages"].items():
+        if data:
+            f = data["facts"]
+            print(f"  {lang}: day={f['election_day']['value']} polls={f['polls_open']['value']}-"
+                  f"{f['polls_close']['value']} site={f['polling_place_site']['value']} "
+                  f"boxes={len(data['drop_box_addresses'])}")
+    print(f"Deterministic mismatches: {len(out['mismatches'])}")
+    notes = {e["id"]: e for e in out["explanations"] or []}
+    for m in out["mismatches"]:
+        print(f"  [{m['kind']}] {m['id']}: certified {m['certified']!r}, page {m['page']!r}  (quote: {m['quote']!r})")
+        e = notes.get(m["id"])
+        if e:
+            print(f"      {e['severity'].upper()}: {e['explanation']}\n      impact: {e['voter_impact']}"
+                  f"\n      fix: {e['suggested_fix']}")
+    if out["summary"]:
+        print(f"Summary: {out['summary']}")
+    for err in out["errors"]:
+        print(f"  error: {err}")
+    print("Model calls:")
+    print_calls(out["calls"])
+    return 0
+
+
+def cmd_hunt(args) -> int:
+    from . import hunter
+    out = hunter.run(NemotronClient(), watchlist=tuple(args.watch or ()))
+    if args.json:
+        print(json.dumps({**out, "calls": [c.__dict__ for c in out["calls"]]}, indent=2, ensure_ascii=False))
+        return 0
+    for s in out["searches"]:
+        print(f"  Tavily {s}")
+    for it in out["items"]:
+        flags = []
+        if it.get("demo_decoy"):
+            flags.append("DEMO DECOY")
+        if it.get("lookalikes"):
+            flags.append("lookalikes=" + ",".join(it["lookalikes"]))
+        if it.get("contradictions"):
+            flags.append("contradicts " + ",".join(m["field"] for m in it["contradictions"]))
+        print(f"  {it['id']:<4} {it['category']:<14} {it['url'][:80]}  {' '.join(flags)}")
+    if out["report_md"]:
+        print("\n" + out["report_md"] + "\n")
+    for err in out["errors"]:
+        print(f"  error: {err}")
+    print("Model calls:")
+    print_calls(out["calls"])
+    return 0
+
+
+def cmd_serve(args) -> int:
+    from .server import serve
+    serve(args.port)
+    return 0
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="python -m nemotron_agent")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -114,8 +179,17 @@ def main(argv=None) -> int:
     t.add_argument("--meta", help="change metadata JSON (with --live)")
     t.add_argument("--no-report", action="store_true", help="skip the incident report call")
     t.add_argument("--json", action="store_true")
+    m = sub.add_parser("multilingual", help="check en/vi/es/tl pages against the certified calendar")
+    m.add_argument("--scenario", default="drift")
+    m.add_argument("--json", action="store_true")
+    h = sub.add_parser("hunt", help="Tavily search + Nemotron misinformation report")
+    h.add_argument("--watch", action="append", help="URL to fetch with Tavily Extract (repeatable)")
+    h.add_argument("--json", action="store_true")
+    v = sub.add_parser("serve", help="demo web server")
+    v.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8000")))
     args = parser.parse_args(argv)
-    return {"models": cmd_models, "triage": cmd_triage}[args.cmd](args)
+    return {"models": cmd_models, "triage": cmd_triage, "multilingual": cmd_multilingual,
+            "hunt": cmd_hunt, "serve": cmd_serve}[args.cmd](args)
 
 
 if __name__ == "__main__":

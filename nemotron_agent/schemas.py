@@ -71,3 +71,45 @@ TAMPER_TRIAGE = _obj({
 })
 
 INCIDENT_REPORT = _obj({"incident_report_md": _STR})
+
+# Election facts stated on one page. "" means the page does not state it.
+FACT_KEYS = ("election_day", "polls_open", "polls_close", "drop_box_close", "mail_ballots_sent",
+             "service_centers_open", "certification_date", "polling_place_site", "registration_site", "phone")
+_FACT = _obj({"value": _STR, "quote": _STR})
+ELECTION_FACTS = _obj({
+    "language": _STR,
+    "facts": _obj({key: _FACT for key in FACT_KEYS}),
+    "drop_box_addresses": {"type": "array", "maxItems": 10, "items": _FACT},
+})
+
+MISMATCH_EXPLANATIONS = _obj({
+    "explanations": {"type": "array", "maxItems": 20, "items": _obj({
+        "id": _STR,              # "<lang>:<field>" as given in the input
+        "explanation": _STR,
+        "voter_impact": _STR,
+        "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+        "suggested_fix": _STR,   # corrected sentence in the page's language
+    })},
+    "summary": _STR,
+})
+
+SEARCH_TRIAGE = _obj({
+    "items": {"type": "array", "maxItems": 30, "items": _obj({
+        "id": _STR,
+        "about_county": {"type": "boolean"},  # about the Kanaloa County election at all
+        "category": {"type": "string",
+                     "enum": ["official", "impersonation", "misinformation", "news", "unrelated", "other"]},
+        "reason": _STR,
+    })},
+})
+
+HUNTER_REPORT = _obj({
+    "findings": {"type": "array", "maxItems": 10, "items": _obj({
+        "url": _STR,
+        "risk": {"type": "string", "enum": ["high", "medium", "low"]},
+        "false_claims": {"type": "array", "maxItems": 8, "items": _STR},
+        "lookalike_domains": {"type": "array", "maxItems": 8, "items": _STR},
+        "recommended_action": _STR,
+    })},
+    "report_md": _STR,
+})

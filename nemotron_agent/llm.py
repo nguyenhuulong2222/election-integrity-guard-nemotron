@@ -149,8 +149,13 @@ class NemotronClient:
         return self._transport
 
     def complete_json(self, *, task: str, role: str, system: str, user: str,
-                      schema: dict, schema_name: str, model: Optional[str] = None) -> LLMResult:
-        """One bounded JSON call: at most 1 + JSON_RETRIES requests (plus SDK transport retries)."""
+                      schema: dict, schema_name: str, model: Optional[str] = None,
+                      check: Optional[Callable[[dict], Optional[str]]] = None) -> LLMResult:
+        """One bounded JSON call: at most 1 + JSON_RETRIES requests (plus SDK transport retries).
+
+        `check` adds a task-specific test on top of the schema; a returned message counts as an
+        invalid reply (for example, a triage that skipped some of the input items).
+        """
         route = self.routes[role]
         model = model or route.model
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -177,6 +182,8 @@ class NemotronClient:
                     problems = validate(data, schema)
                     if problems:
                         error = "schema: " + "; ".join(problems[:5])
+                    elif check is not None:
+                        error = check(data)
                 except (json.JSONDecodeError, ValueError) as exc:
                     error = f"invalid JSON: {exc}"
             rec = CallRecord(task, role, model, out["prompt_tokens"], out["completion_tokens"],

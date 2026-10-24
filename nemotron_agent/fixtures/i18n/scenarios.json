@@ -1,0 +1,13 @@
+{
+  "_comment": "Each scenario edits the consistent pages with exact string replacements, so every drift is visible in review.",
+  "consistent": {"title": "All four languages agree with the certified calendar", "replace": {}, "expected": []},
+  "drift": {
+    "title": "Three translation drifts that would send voters to the wrong place or time",
+    "replace": {
+      "tl": [["Martes, Nobyembre 3, 2026, 7:00 ng umaga", "Martes, Nobyembre 4, 2026, 7:00 ng umaga"]],
+      "es": [["de 7:00 a. m. a 7:00 p. m.", "de 7:00 a. m. a 6:00 p. m."]],
+      "vi": [["Tìm địa điểm bỏ phiếu của bạn: elections.kanaloacounty.example", "Tìm địa điểm bỏ phiếu của bạn: elections.kanaloa-county.example"]]
+    },
+    "expected": [["tl", "election_day"], ["es", "polls_close"], ["vi", "polling_place_site"]]
+  }
+}
