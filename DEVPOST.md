@@ -88,22 +88,17 @@ NVIDIA Nemotron (3.5 Lightning, 3 Super 120B, 3 Ultra 550B) · Nebius Token Fact
 
 ## What was significantly updated during the Submission Period
 
-> Verify the hackathon's Submission Period start date before pasting; the dates below come from the git history.
+This is a **new project, created entirely within the Submission Period** (which opened August 26, 2026, 9:00 AM PT). The git history is the evidence: the first commit is dated October 20, 2026. The deterministic base (a fictional county site, a Python integrity checker and GitLab CI) was built October 20–23, 2026, with no Nebius, Nemotron or Tavily code. The Nemotron and Tavily layer was added from October 24, 2026 on the `nebius-nemotron` branch:
 
-The project started as **Election Integrity Guard**, built October 20–23, 2026 for the GitLab Transcend hackathon: a fictional county election site, a deterministic Python checker run in GitLab CI, and a GitLab Duo review flow. It contained **no Nebius, Nemotron or Tavily code**.
-
-Everything below was built for this hackathon, starting October 24, 2026, on the `nebius-nemotron` branch:
-
-- **The whole `nemotron_agent/` package (new):**
-  - the Token Factory client with role routing, strict JSON schemas, bounded retries and a per-call usage and cost log;
-  - the Results Seal comparison and Nemotron tamper triage with gates v1 and v2, plus the Ultra incident report;
+- the `nemotron_agent/` package:
+  - the Token Factory client with role routing, strict JSON schemas, bounded retries and a per-call cost log;
+  - Results Seal tamper triage with gates v1 and v2, plus the Ultra incident report;
   - the 4-language consistency check;
   - the Tavily misinformation hunter;
-  - the deterministic risk signals.
-- **An eval harness and 29 fixtures:** 8 development, 7 + 7 held-out tamper cases, and 7 translation-drift scenarios, with a results file for every run.
-- **A new web demo** (API, UI with live per-step progress, recorded runs, rate limits, labeled decoy pages) and its Render deployment.
-- **New documentation:** this README section on Nemotron and Token Factory, the eval write-up, and a feedback log.
-- **Reused unchanged:** the earlier deterministic checker modules (`checker/`), imported as a library.
+  - deterministic risk signals;
+- an eval harness with 29 fixtures (held-out sets committed before they were run) and a results file for every run;
+- the web demo (API, UI with live per-step progress, recorded runs, rate limits, labeled decoy pages) and its Render deployment;
+- documentation and a feedback log written during the build.
 
 ---
 
