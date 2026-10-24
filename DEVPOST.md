@@ -1,10 +1,10 @@
 # Devpost drafts: Nemotron Integrity Agent
 
 Paste-ready text for the Nebius × NVIDIA Global AI Hackathon submission ("Best Apps and Agents").
-Replace `DEMO_URL_PLACEHOLDER` with the Render URL and `VIDEO_URL_PLACEHOLDER` with the YouTube link.
+Replace `VIDEO_URL_PLACEHOLDER` with the YouTube link.
 
 **Links**
-- Demo: DEMO_URL_PLACEHOLDER
+- Demo: https://eig-nemotron.onrender.com
 - Code (MIT): https://github.com/nguyenhuulong2222/election-integrity-guard-nemotron
 - Video: VIDEO_URL_PLACEHOLDER
 
@@ -137,7 +137,7 @@ Everything here was observed while building; the dated log is in `docs/nebius-fe
 
 ## Video script (target 2:40, hard limit 3:00)
 
-Record the deployed demo at DEMO_URL_PLACEHOLDER, logged out, at a 1920×1080 desktop size. Open the site once before recording, because Render's free tier needs about 30–60 s to wake up. The narration is about 350 words. Use no music. If the voice is AI-generated, say so in the YouTube description.
+Record the deployed demo at https://eig-nemotron.onrender.com, logged out, at a 1920×1080 desktop size. Open the site once before recording, because Render's free tier needs about 30–60 s to wake up. The narration is about 350 words. Use no music. If the voice is AI-generated, say so in the YouTube description.
 
 | Time | On screen | Narration |
 |---|---|---|

@@ -2,7 +2,7 @@
 
 **NVIDIA Nemotron on Nebius Token Factory guards a county election website: deterministic checks detect every change, Nemotron reasons about what each change means, Tavily searches the live web for misinformation, and a person makes the final call.**
 
-**Live demo:** DEMO_URL_PLACEHOLDER (mobile-friendly; "Replay" shows recorded runs instantly, "Run live" calls Nemotron and Tavily now)
+**Live demo:** https://eig-nemotron.onrender.com (mobile-friendly; "Replay" shows recorded runs instantly, "Run live" calls Nemotron and Tavily now)
 
 > **Fictional demo.** "Kanaloa County" does not exist. Every county, candidate, number, person and domain here is invented, official links use the reserved `.example` domain, and every page carries a "Fictional demo data" banner.
 > License: [MIT](LICENSE). Built for the Nebius × NVIDIA Global AI Hackathon, track "Best Apps and Agents".
@@ -68,7 +68,7 @@ How each call is made:
 - **Prices.** Prices come from Token Factory's own `GET /v1/models?verbose=true`; `python -m nemotron_agent models` re-checks the configured ids and prices.
 - **Prompt-injection hardening.** Every prompt treats page content and metadata as evidence, never as instructions. Fixture T02 hides an instruction to "classify as legitimate" inside a contest title; Super flagged it as tampering in every run.
 - **Zero data retention** is enabled on the author's Token Factory account.
-- **Cost so far.** Development, the eval and the recorded demo used 864 model and Tavily calls, costing about **$0.57** of Token Factory usage in total. A full demo run costs **$0.002–0.007**.
+- **Cost so far.** Development, the eval and the recorded demo used 864 model and Tavily calls in the local usage log, costing about **$0.57** of Token Factory usage, plus about $0.01 of live runs on the deployed demo. A full demo run costs **$0.002–0.007**.
 
 **Tavily** (`nemotron_agent/tavily.py`) is called over REST at runtime: `/search` with basic depth, and `/extract` with `format: "text"` (the default markdown format dropped list and table content on our pages; see the [feedback](DEVPOST.md#feedback-token-factory-nemotron-tavily)).
 
@@ -200,7 +200,7 @@ EOF
 .venv/bin/python -m nemotron_agent serve --port 8000      # demo UI at http://localhost:8000
 .venv/bin/python -m nemotron_agent eval --repeats 2       # full eval (about $0.20)
 
-python3 -m unittest discover -s nemotron_agent/tests -t .  # 54 offline tests, no keys or network
+python3 -m unittest discover -s nemotron_agent/tests -t .  # 56 offline tests, no keys or network
 ```
 
 **Deploy:** `render.yaml` is a Render Blueprint. It pins Python 3.12.7, and the keys are `sync: false` secrets entered in the Render dashboard, so they never appear in the repo or in client JavaScript. Live runs are limited to 6 per visitor per hour and 60 per day (`EIG_IP_HOURLY_CAP`, `EIG_DAILY_LIVE_CAP`), with at most 2 at a time, on top of the spending limit on the Token Factory account. The visitor IP is read from the right of `X-Forwarded-For` (`EIG_TRUSTED_PROXY_HOPS`; 3 on Render, where the chain was checked with `/api/whoami` to be visitor, Cloudflare edge, Render internal proxy), so client-supplied entries cannot spoof it.

@@ -1,0 +1,576 @@
+{
+ "id": "recorded-hunt",
+ "scenario": "hunt",
+ "live": false,
+ "status": "done",
+ "started_at": 1792876161.5462368,
+ "finished_at": 1792876199.6084101,
+ "steps": {
+  "tavily": {
+   "started_at": 1792876161.546836,
+   "status": "done",
+   "detail": "18 unique results",
+   "finished_at": 1792876162.696422
+  },
+  "triage": {
+   "started_at": 1792876162.7056665,
+   "status": "done",
+   "detail": "15 unrelated, 3 pages about the county",
+   "finished_at": 1792876178.471231
+  },
+  "extract": {
+   "started_at": 1792876178.471232,
+   "status": "done",
+   "detail": "2 pages with contradictions or lookalike domains",
+   "finished_at": 1792876187.517774
+  },
+  "report": {
+   "started_at": 1792876187.517789,
+   "status": "done",
+   "detail": "",
+   "finished_at": 1792876199.6082509
+  }
+ },
+ "result": {
+  "queries": [
+   "Kanaloa County election polling place",
+   "Kanaloa County 2026 general election date",
+   "Kanaloa County Elections voter information"
+  ],
+  "watchlist": [
+   "https://showcase-0b6166.gitlab.io/voter-info.html",
+   "https://eig-nemotron.onrender.com/decoys/kanaloa-vote-update.html",
+   "https://eig-nemotron.onrender.com/decoys/noticias-kanaloa.html"
+  ],
+  "searches": [
+   {
+    "extract": 3,
+    "results": 3,
+    "failed": [],
+    "latency_ms": 544
+   },
+   {
+    "query": "Kanaloa County election polling place",
+    "results": 5,
+    "latency_ms": 200
+   },
+   {
+    "query": "Kanaloa County 2026 general election date",
+    "results": 5,
+    "latency_ms": 193
+   },
+   {
+    "query": "Kanaloa County Elections voter information",
+    "results": 5,
+    "latency_ms": 208
+   }
+  ],
+  "items": [
+   {
+    "id": "r1",
+    "url": "https://showcase-0b6166.gitlab.io/voter-info.html",
+    "title": "",
+    "source": "watchlist (Tavily Extract)",
+    "category": "official",
+    "reason": "Published on kanaloacounty.example, official county domain.",
+    "about_county": true,
+    "mentions_county": true,
+    "official": true,
+    "demo_decoy": false,
+    "language": "English",
+    "lookalikes": [],
+    "contradictions": []
+   },
+   {
+    "id": "r2",
+    "url": "https://eig-nemotron.onrender.com/decoys/kanaloa-vote-update.html",
+    "title": "",
+    "source": "watchlist (Tavily Extract)",
+    "category": "misinformation",
+    "reason": "Claims election day moved to Nov 4, 2026, contradicting official dates.",
+    "about_county": true,
+    "mentions_county": true,
+    "official": false,
+    "demo_decoy": true,
+    "language": "en",
+    "lookalikes": [
+     "elections.kanaloa-county.example"
+    ],
+    "contradictions": [
+     {
+      "id": "r2:election_day",
+      "lang": "r2",
+      "field": "election_day",
+      "certified": "2026-11-03",
+      "page": "2026-11-04",
+      "quote": "Election Day in Kanaloa County is now Wednesday, November 4, 2026.",
+      "kind": "wrong"
+     },
+     {
+      "id": "r2:polls_open",
+      "lang": "r2",
+      "field": "polls_open",
+      "certified": "07:00",
+      "page": "08:00",
+      "quote": "Polls will be open from 8:00 am to 6:00 pm.",
+      "kind": "wrong"
+     },
+     {
+      "id": "r2:polls_close",
+      "lang": "r2",
+      "field": "polls_close",
+      "certified": "19:00",
+      "page": "18:00",
+      "quote": "Polls will be open from 8:00 am to 6:00 pm.",
+      "kind": "wrong"
+     },
+     {
+      "id": "r2:polling_place_site",
+      "lang": "r2",
+      "field": "polling_place_site",
+      "certified": "elections.kanaloacounty.example",
+      "page": "elections.kanaloa-county.example",
+      "quote": "Find your new polling place at elections.kanaloa-county.example.",
+      "kind": "wrong",
+      "lookalike_of": "kanaloacounty.example"
+     }
+    ]
+   },
+   {
+    "id": "r3",
+    "url": "https://eig-nemotron.onrender.com/decoys/noticias-kanaloa.html",
+    "title": "",
+    "source": "watchlist (Tavily Extract)",
+    "category": "misinformation",
+    "reason": "Provides false ballot box location and closing time for 2026 election.",
+    "about_county": true,
+    "mentions_county": true,
+    "official": false,
+    "demo_decoy": true,
+    "language": "Spanish",
+    "lookalikes": [
+     "registro-kanaloacounty.example"
+    ],
+    "contradictions": [
+     {
+      "id": "r3:drop_box_close",
+      "lang": "r3",
+      "field": "drop_box_close",
+      "certified": "19:00",
+      "page": "17:00",
+      "quote": "cierran a las 5:00 p. m.",
+      "kind": "wrong"
+     },
+     {
+      "id": "r3:registration_site",
+      "lang": "r3",
+      "field": "registration_site",
+      "certified": "register.kanaloacounty.example",
+      "page": "registro-kanaloacounty.example",
+      "quote": "registro-kanaloacounty.example",
+      "kind": "wrong",
+      "lookalike_of": "kanaloacounty.example"
+     },
+     {
+      "id": "r3:drop_box_addresses",
+      "lang": "r3",
+      "field": "drop_box_addresses",
+      "certified": [
+       "100 harbor lane port kanaloa",
+       "42 ridge road makaiwa",
+       "7 breakwater street leeward point"
+      ],
+      "page": [
+       "15 harbor lane port kanaloa"
+      ],
+      "quote": "",
+      "kind": "wrong"
+     }
+    ]
+   },
+   {
+    "id": "r4",
+    "url": "https://www.vote.org/polling-place-locator",
+    "title": "Polling Place Locator - Vote.org",
+    "source": "search: Kanaloa County election polling place",
+    "category": "unrelated",
+    "reason": "National voter tools site, not about Kanaloa County.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r5",
+    "url": "https://elections.maryland.gov/voting/where.html",
+    "title": "Voter Registration and Polling Place Look-Up",
+    "source": "search: Kanaloa County election polling place",
+    "category": "unrelated",
+    "reason": "Maryland state elections, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r6",
+    "url": "https://www.usa.gov/find-polling-place",
+    "title": "Find your polling place | USAGov",
+    "source": "search: Kanaloa County election polling place",
+    "category": "unrelated",
+    "reason": "US-wide polling place finder, not Kanaloa County.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r7",
+    "url": "https://elections.maryland.gov/elections/archive/2024/PG24_Polling_Places.pdf",
+    "title": "Polling Place Districts List",
+    "source": "search: Kanaloa County election polling place",
+    "category": "unrelated",
+    "reason": "Maryland polling place PDF, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r8",
+    "url": "https://www.nass.org/can-i-vote/find-your-polling-place",
+    "title": "Find Your Polling Place | NASS",
+    "source": "search: Kanaloa County election polling place",
+    "category": "unrelated",
+    "reason": "National association polling place search, not Kanaloa County.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r9",
+    "url": "https://kawaiola.news/wp-content/uploads/2026/09/KaWaiOla-Oct2026.pdf",
+    "title": "October 2026",
+    "source": "search: Kanaloa County 2026 general election date",
+    "category": "unrelated",
+    "reason": "General election info for real jurisdiction, not Kanaloa County.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r10",
+    "url": "https://www.news10.com/news/your-local-election-hq/2026-capital-region-general-election-guide",
+    "title": "2026 Capital Region general election guide",
+    "source": "search: Kanaloa County 2026 general election date",
+    "category": "unrelated",
+    "reason": "New York local election guide, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r11",
+    "url": "https://elections.ny.gov/election-information",
+    "title": "Election Information | New York State Board of Elections",
+    "source": "search: Kanaloa County 2026 general election date",
+    "category": "unrelated",
+    "reason": "New York State Board of Elections, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r12",
+    "url": "https://elections.ny.gov",
+    "title": "New York State Board of Elections | New York State Board of Elections",
+    "source": "search: Kanaloa County 2026 general election date",
+    "category": "unrelated",
+    "reason": "New York State Board of Elections homepage, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r13",
+    "url": "https://www.monroecounty.gov/elections-events",
+    "title": "Monroe County, NY - Board of Elections Events",
+    "source": "search: Kanaloa County 2026 general election date",
+    "category": "unrelated",
+    "reason": "Monroe County NY elections, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r14",
+    "url": "https://ocvote.gov/vlt",
+    "title": "Your Voter Information",
+    "source": "search: Kanaloa County Elections voter information",
+    "category": "unrelated",
+    "reason": "Orange County CA voter info, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r15",
+    "url": "https://www.lavote.gov/home/voting-elections",
+    "title": "Registrar of Voters",
+    "source": "search: Kanaloa County Elections voter information",
+    "category": "unrelated",
+    "reason": "Los Angeles County voter info, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r16",
+    "url": "https://www.sos.ca.gov/elections/registration-status",
+    "title": "Check Your Voter Registration Status :: California Secretary of State",
+    "source": "search: Kanaloa County Elections voter information",
+    "category": "unrelated",
+    "reason": "California Secretary of State, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r17",
+    "url": "https://lacounty.gov/government/elections-voting",
+    "title": "Elections & Voting – COUNTY OF LOS ANGELES",
+    "source": "search: Kanaloa County Elections voter information",
+    "category": "unrelated",
+    "reason": "Los Angeles County elections, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   },
+   {
+    "id": "r18",
+    "url": "https://elections.sbcounty.gov",
+    "title": "San Bernardino County Registrar of Voters – Elections",
+    "source": "search: Kanaloa County Elections voter information",
+    "category": "unrelated",
+    "reason": "San Bernardino County elections, different jurisdiction.",
+    "about_county": false,
+    "mentions_county": false,
+    "official": false,
+    "demo_decoy": false,
+    "language": null,
+    "lookalikes": null,
+    "contradictions": null
+   }
+  ],
+  "findings": [
+   {
+    "url": "https://eig-nemotron.onrender.com/decoys/kanaloa-vote-update.html",
+    "risk": "high",
+    "false_claims": [
+     "Election Day in Kanaloa County is now Wednesday, November 4, 2026.",
+     "Polls will be open from 8:00 am to 6:00 pm.",
+     "Find your new polling place at elections.kanaloa-county.example."
+    ],
+    "lookalike_domains": [
+     "elections.kanaloa-county.example"
+    ],
+    "recommended_action": "File a takedown request with the host and issue a public correction via the county’s official channels."
+   },
+   {
+    "url": "https://eig-nemotron.onrender.com/decoys/noticias-kanaloa.html",
+    "risk": "high",
+    "false_claims": [
+     "cierran a las 5:00 p. m.",
+     "registro-kanaloacounty.example"
+    ],
+    "lookalike_domains": [
+     "registro-kanaloacounty.example"
+    ],
+    "recommended_action": "File a takedown request with the host and publish a Spanish-language rumor‑control notice clarifying the correct drop‑box closing time and registration site."
+   }
+  ],
+  "report_md": "## Summary\nTwo demo decoy pages hosted on eig‑nemotron.onrender.com spread false election information for Kanaloa County, including an incorrect election date, poll hours, polling‑place URL, drop‑box closing time, and registration site. Both use look‑alike domains that could misdirect voters.\n\n## Findings\n- https://eig-nemotron.onrender.com/decoys/kanaloa-vote-update.html – high risk. False claims: “Election Day in Kanaloa County is now Wednesday, November 4, 2026.”; “Polls will be open from 8:00 am to 6:00 pm.”; “Find your new polling place at elections.kanaloa-county.example.” Look‑alike domain: elections.kanaloa-county.example. Recommended action: file a takedown request with the host and issue a public correction via the county’s official channels.\n- https://eig-nemotron.onrender.com/decoys/noticias-kanaloa.html – high risk. False claims: “cierran a las 5:00 p. m.”; “registro-kanaloacounty.example”. Look‑alike domain: registro-kanaloacounty.example. Recommended action: file a takedown request with the host and publish a Spanish‑language rumor‑control notice clarifying the correct drop‑box closing time and registration site.\n\n## Searched\nQueries: “Kanaloa County election polling place”, “Kanaloa County 2026 general election date”, “Kanaloa County Elections voter information”. Returned 16 unrelated results and 1 official page (the GitLab showcase).",
+  "errors": [],
+  "calls": [
+   {
+    "task": "tavily_extract",
+    "role": "tavily",
+    "model": "tavily/extract",
+    "prompt_tokens": 0,
+    "completion_tokens": 3,
+    "reasoning_tokens": 0,
+    "latency_ms": 544,
+    "cost_usd": 0.0,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "tavily_search",
+    "role": "tavily",
+    "model": "tavily/search",
+    "prompt_tokens": 0,
+    "completion_tokens": 5,
+    "reasoning_tokens": 0,
+    "latency_ms": 200,
+    "cost_usd": 0.0,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "tavily_search",
+    "role": "tavily",
+    "model": "tavily/search",
+    "prompt_tokens": 0,
+    "completion_tokens": 5,
+    "reasoning_tokens": 0,
+    "latency_ms": 193,
+    "cost_usd": 0.0,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "tavily_search",
+    "role": "tavily",
+    "model": "tavily/search",
+    "prompt_tokens": 0,
+    "completion_tokens": 5,
+    "reasoning_tokens": 0,
+    "latency_ms": 208,
+    "cost_usd": 0.0,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "search_triage",
+    "role": "fast",
+    "model": "nvidia/Nemotron-3_5-Lightning",
+    "prompt_tokens": 4252,
+    "completion_tokens": 679,
+    "reasoning_tokens": 0,
+    "latency_ms": 15764,
+    "cost_usd": 0.0004181,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "extract_facts:r1",
+    "role": "fast",
+    "model": "nvidia/Nemotron-3_5-Lightning",
+    "prompt_tokens": 774,
+    "completion_tokens": 561,
+    "reasoning_tokens": 0,
+    "latency_ms": 7444,
+    "cost_usd": 0.0001811,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "extract_facts:r2",
+    "role": "fast",
+    "model": "nvidia/Nemotron-3_5-Lightning",
+    "prompt_tokens": 523,
+    "completion_tokens": 272,
+    "reasoning_tokens": 0,
+    "latency_ms": 9041,
+    "cost_usd": 9.67e-05,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "extract_facts:r3",
+    "role": "fast",
+    "model": "nvidia/Nemotron-3_5-Lightning",
+    "prompt_tokens": 513,
+    "completion_tokens": 247,
+    "reasoning_tokens": 0,
+    "latency_ms": 3857,
+    "cost_usd": 9.01e-05,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "hunter_report",
+    "role": "reasoning",
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "prompt_tokens": 1609,
+    "completion_tokens": 2052,
+    "reasoning_tokens": 1418,
+    "latency_ms": 12089,
+    "cost_usd": 0.0023295,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   }
+  ],
+  "totals": {
+   "cost_usd": 0.003116,
+   "prompt_tokens": 7671,
+   "completion_tokens": 3829,
+   "model_calls": 5,
+   "tavily_calls": 4
+  }
+ },
+ "error": null,
+ "recorded_at": "2026-10-24T21:09:59+00:00",
+ "note": "Recorded from a live run on the deployed Render service, so Tavily Extract fetched the public decoy URLs."
+}
