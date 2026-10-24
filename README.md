@@ -2,7 +2,7 @@
 
 **NVIDIA Nemotron on Nebius Token Factory guards a county election website: deterministic checks detect every change, Nemotron reasons about what each change means, Tavily searches the live web for misinformation, and a person makes the final call.**
 
-**Live demo:** https://eig-nemotron.onrender.com (mobile-friendly; "Replay" shows recorded runs instantly, "Run live" calls Nemotron and Tavily now)
+**Live demo:** https://eig-nemotron.onrender.com (mobile-friendly; "Replay" shows recorded runs instantly, "Run live" calls Nemotron and Tavily now). The demo stays live through the end of judging (Dec 15, 2026). Live runs are rate-limited (6 per visitor per hour, 60 per day in total), and Replay is always available. The free instance sleeps when idle, so the first load can take up to a minute.
 
 > **Fictional demo.** "Kanaloa County" does not exist. Every county, candidate, number, person and domain here is invented, official links use the reserved `.example` domain, and every page carries a "Fictional demo data" banner.
 > License: [MIT](LICENSE). Built for the Nebius × NVIDIA Global AI Hackathon, track "Best Apps and Agents".

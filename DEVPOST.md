@@ -4,7 +4,7 @@ Paste-ready text for the Nebius × NVIDIA Global AI Hackathon submission ("Best 
 Replace `VIDEO_URL_PLACEHOLDER` with the YouTube link.
 
 **Links**
-- Demo: https://eig-nemotron.onrender.com
+- Demo: https://eig-nemotron.onrender.com (live through the end of judging, Dec 15, 2026; live runs are rate-limited, Replay always works)
 - Code (MIT): https://github.com/nguyenhuulong2222/election-integrity-guard-nemotron
 - Video: VIDEO_URL_PLACEHOLDER
 
