@@ -135,8 +135,9 @@ class Handler(BaseHTTPRequestHandler):
                                       # decoys are self-contained pages with one inline <style> and no script
                                       "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; "
                                                                  "base-uri 'none'; form-action 'none'"})
-        if path == "/healthz":
-            return self.send(200, b"ok\n", "text/plain; charset=utf-8")
+        if path == "/healthz":  # Render sets RENDER_GIT_COMMIT; it shows which commit is live
+            commit = os.environ.get("RENDER_GIT_COMMIT", "local")[:7]
+            return self.send(200, f"ok {commit}\n".encode(), "text/plain; charset=utf-8")
         if path in ("/", "/index.html"):
             return self.static("index.html")
         if path.startswith("/static/"):
