@@ -21,3 +21,6 @@ services:
         value: "60"            # live scenario runs per day, all visitors together
       - key: EIG_IP_HOURLY_CAP
         value: "6"             # live scenario runs per visitor IP per hour
+      - key: EIG_TRUSTED_PROXY_HOPS
+        value: "3"             # X-Forwarded-For on Render (checked 2026-10-24 with /api/whoami):
+                               # <client-supplied...>, visitor, Cloudflare edge, Render internal proxy

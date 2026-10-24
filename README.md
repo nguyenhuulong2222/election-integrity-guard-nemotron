@@ -203,7 +203,7 @@ EOF
 python3 -m unittest discover -s nemotron_agent/tests -t .  # 54 offline tests, no keys or network
 ```
 
-**Deploy:** `render.yaml` is a Render Blueprint. It pins Python 3.12.7, and the keys are `sync: false` secrets entered in the Render dashboard, so they never appear in the repo or in client JavaScript. Live runs are limited to 6 per visitor per hour and 60 per day (`EIG_IP_HOURLY_CAP`, `EIG_DAILY_LIVE_CAP`), with at most 2 at a time, on top of the spending limit on the Token Factory account. The visitor IP is read from the right of `X-Forwarded-For` (`EIG_TRUSTED_PROXY_HOPS`), so client-supplied entries cannot spoof it.
+**Deploy:** `render.yaml` is a Render Blueprint. It pins Python 3.12.7, and the keys are `sync: false` secrets entered in the Render dashboard, so they never appear in the repo or in client JavaScript. Live runs are limited to 6 per visitor per hour and 60 per day (`EIG_IP_HOURLY_CAP`, `EIG_DAILY_LIVE_CAP`), with at most 2 at a time, on top of the spending limit on the Token Factory account. The visitor IP is read from the right of `X-Forwarded-For` (`EIG_TRUSTED_PROXY_HOPS`; 3 on Render, where the chain was checked with `/api/whoami` to be visitor, Cloudflare edge, Render internal proxy), so client-supplied entries cannot spoof it.
 
 ## Repository layout
 

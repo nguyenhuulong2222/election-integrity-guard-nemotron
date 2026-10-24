@@ -37,6 +37,13 @@ class ClientIpTest(unittest.TestCase):
         self.assertEqual(client_ip("1.2.3.4, 203.0.113.7", "10.0.0.5", 1), "203.0.113.7")
         self.assertEqual(client_ip("1.2.3.4, 5.6.7.8, 203.0.113.7", "10.0.0.5", 1), "203.0.113.7")
 
+    def test_render_chain_observed_in_production(self):
+        from nemotron_agent.server import client_ip
+        # Seen on Render: visitor, Cloudflare edge, Render internal proxy (a spoofed entry lands first).
+        self.assertEqual(client_ip("198.51.100.23, 172.71.146.176, 10.194.13.185", "10.0.0.1", 3), "198.51.100.23")
+        self.assertEqual(client_ip("203.0.113.99, 198.51.100.23, 172.71.146.85, 10.26.163.59", "10.0.0.1", 3),
+                         "198.51.100.23")
+
     def test_two_proxy_hops(self):
         from nemotron_agent.server import client_ip
         self.assertEqual(client_ip("1.2.3.4, 203.0.113.7, 10.1.1.1", "10.0.0.5", 2), "203.0.113.7")
