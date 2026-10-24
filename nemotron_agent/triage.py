@@ -23,7 +23,7 @@ import json
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
-from . import config
+from . import config, risk
 from .llm import LLMError, NemotronClient, no_progress
 from .schemas import INCIDENT_REPORT, TAMPER_TRIAGE
 from .seal import compare
@@ -115,7 +115,8 @@ def run(certified_bytes: bytes, live_bytes: bytes, metadata: dict,
     progress("seal", "done", "match" if seal["match"] else
              f"mismatch: {len(seal['diff'])} fields changed, {len(seal['findings'])} rule findings")
     out = {"seal": seal, "gate": gate, "triage": None, "votes": [], "triage_error": None, "decision": None,
-           "incident_report_md": None, "calls": []}
+           # Shown to the official; never read by the gate and never sent to the triage model.
+           "risk_signals": risk.signals(seal, metadata), "incident_report_md": None, "calls": []}
     if seal["match"]:
         out["decision"] = decide(seal, None)
         progress("gate", "done", out["decision"]["action"])
@@ -152,6 +153,7 @@ def run(certified_bytes: bytes, live_bytes: bytes, metadata: dict,
         evidence = {"seal": {k: seal[k] for k in ("certified_sha256", "live_sha256")},
                     "diff": seal["diff"][:MAX_DIFF_ROWS], "deterministic_findings": seal["findings"],
                     "change_metadata": metadata, "analyst_verdicts": out["votes"],
+                    "risk_signals_for_official": out["risk_signals"],
                     "decision": out["decision"]}
         try:
             res = client.complete_json(task="incident_report", role="report", system=REPORT_SYSTEM,

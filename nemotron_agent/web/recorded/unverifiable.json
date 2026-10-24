@@ -210,7 +210,15 @@
    "completion_tokens": 2860,
    "model_calls": 2,
    "tavily_calls": 0
-  }
+  },
+  "risk_signals": [
+   {
+    "id": "RISK-SCOPE",
+    "title": "Ticket gives no figures, but counts changed",
+    "detail": "largest count change is 40; the ticket text quotes no numbers"
+   }
+  ]
  },
- "error": null
+ "error": null,
+ "note": "risk_signals added afterwards from seal + metadata (deterministic; no model output changed)"
 }

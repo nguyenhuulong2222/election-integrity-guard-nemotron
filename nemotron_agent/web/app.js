@@ -217,6 +217,14 @@ function renderSeal(r) {
       el("span", { class: "badge " + (e.points_to === "tampering" ? "bad" : e.points_to === "legitimate" ? "good" : "neutral") }, e.points_to),
       " ", el("code", null, e.change), " — ", e.observation))));
   }
+  if (!seal.match) {
+    const sig = r.risk_signals || [];
+    nodes.push(el("h3", null, "Risk signals for the official"),
+      el("p", { class: "note" }, "Deterministic and informational only: the gate does not use them and Nemotron does not see them."),
+      sig.length ? el("ul", { class: "evidence" }, sig.map((x) => el("li", null,
+        el("span", { class: "badge mid" }, x.id), " ", el("strong", null, x.title), " — ", x.detail)))
+        : el("p", null, "None of the five signals fired (service account, off-hours, ticket scope, one-sided removal, registered-voter drop)."));
+  }
   if (seal.diff && seal.diff.length) {
     nodes.push(el("h3", null, "What changed (deterministic diff)"), el("div", { class: "table-wrap" }, el("table", null,
       el("thead", null, el("tr", null, el("th", null, "Field"), el("th", null, "Certified"), el("th", null, "Live"))),

@@ -3,27 +3,27 @@
  "scenario": "translations",
  "live": false,
  "status": "done",
- "recorded_at": "2026-10-24T20:03:17+00:00",
- "started_at": 1792872183.5740008,
- "finished_at": 1792872197.263824,
+ "recorded_at": "2026-10-24T20:31:23+00:00",
+ "started_at": 1792873873.8257082,
+ "finished_at": 1792873883.815549,
  "steps": {
   "extract": {
-   "started_at": 1792872183.5852008,
+   "started_at": 1792873874.1099882,
    "status": "done",
    "detail": "",
-   "finished_at": 1792872189.775439
+   "finished_at": 1792873879.077324
   },
   "compare": {
-   "started_at": 1792872189.775439,
+   "started_at": 1792873879.077325,
    "status": "done",
    "detail": "3 mismatches",
-   "finished_at": 1792872189.778975
+   "finished_at": 1792873879.0878038
   },
   "explain": {
-   "started_at": 1792872189.778975,
+   "started_at": 1792873879.087806,
    "status": "done",
    "detail": "",
-   "finished_at": 1792872197.261142
+   "finished_at": 1792873883.8113081
   }
  },
  "result": {
@@ -92,7 +92,7 @@
     "facts": {
      "election_day": {
       "value": "2026-11-03",
-      "quote": "Ngày Bầu cử | Thứ Ba, ngày 3 tháng 11 năm 2026"
+      "quote": "Ngày Bầu cử | Thứ Ba, ngày 3 tháng 11 năm 2026, từ 7:00 sáng đến 7:00 tối"
      },
      "polls_open": {
       "value": "07:00",
@@ -104,11 +104,11 @@
      },
      "drop_box_close": {
       "value": "19:00",
-      "quote": "Thùng nhận phiếu bầu (mở đến 7:00 tối Ngày Bầu cử)"
+      "quote": "Thùng bỏ phiếu (mở đến 7:00 tối Ngày Bầu cử)"
      },
      "mail_ballots_sent": {
       "value": "2026-10-13",
-      "quote": "Gửi phiếu bầu qua bưu điện | Thứ Ba, ngày 13 tháng 10 năm 2026"
+      "quote": "Phiếu bầu được gửi qua thư từ | Thứ Ba, ngày 13 tháng 10 năm 2026"
      },
      "service_centers_open": {
       "value": "2026-10-20",
@@ -246,7 +246,7 @@
      },
      "phone": {
       "value": "8085550147",
-      "quote": "Telepono (kathang-isip): (808) 555-0147"
+      "quote": "Telepono (kathang-isip): (808) 555-0147."
      }
     },
     "drop_box_addresses": [
@@ -298,27 +298,27 @@
   "explanations": [
    {
     "id": "vi:polling_place_site",
-    "explanation": "The page uses the domain elections.kanaloa-county.example instead of the certified elections.kanaloacounty.example, a look‑alike that could direct voters to a fraudulent site.",
-    "voter_impact": "Voters may be led to a fake website where they could enter personal information or fail to find legitimate voting information, risking fraud or confusion.",
+    "explanation": "The page gives an incorrect website for finding polling places, using a hyphenated domain that does not match the official site.",
+    "voter_impact": "A Vietnamese‑speaking voter could be directed to a look‑alike site and risk entering personal information on a fraudulent page.",
     "severity": "high",
     "suggested_fix": "Tìm địa điểm bỏ phiếu của bạn: elections.kanaloacounty.example"
    },
    {
     "id": "es:polls_close",
-    "explanation": "The Spanish page states polls close at 6:00 p.m. (18:00) while the certified time is 7:00 p.m. (19:00).",
-    "voter_impact": "Voters who rely on the page might arrive after 6 p.m., believe the polls are already closed, and leave without voting, losing their chance to cast a ballot.",
+    "explanation": "The Spanish version states that polls close at 6:00 p.m., while the certified time is 7:00 p.m.",
+    "voter_impact": "A Spanish‑speaking voter arriving after 6:00 p.m. would be told the polls are closed and could be turned away, losing the chance to vote.",
     "severity": "high",
-    "suggested_fix": "a 7:00 p. m."
+    "suggested_fix": "Las urnas cierran a las 7:00 p. m."
    },
    {
     "id": "tl:election_day",
-    "explanation": "The Tagalog page lists election day as November 4, 2026, whereas the certified date is November 3, 2026.",
-    "voter_impact": "Voters may show up on the wrong day (November 4) when polls are closed, preventing them from voting in the election.",
+    "explanation": "The Tagalog page lists the election date as November 4, 2026, instead of the certified November 3, 2026.",
+    "voter_impact": "A Tagalog‑speaking voter who follows the page would show up a day later, find the polls closed, and miss voting.",
     "severity": "high",
     "suggested_fix": "Araw ng Halalan | Martes, Nobyembre 3, 2026, 7:00 ng umaga hanggang 7:00 ng gabi"
    }
   ],
-  "summary": "Three high‑severity errors: a look‑alike domain, incorrect poll closing time, and wrong election date. Each could stop voters from voting or expose them to fraud; corrections are provided.",
+  "summary": "Three language‑specific errors mislead voters about the polling‑place website, closing time, and election date, each posing a high risk of preventing voting or exposing voters to fraud.",
   "errors": [],
   "calls": [
    {
@@ -328,7 +328,7 @@
     "prompt_tokens": 723,
     "completion_tokens": 597,
     "reasoning_tokens": 0,
-    "latency_ms": 5677,
+    "latency_ms": 4965,
     "cost_usd": 0.0001867,
     "ok": true,
     "attempt": 1,
@@ -338,11 +338,11 @@
     "task": "extract_facts:vi",
     "role": "fast",
     "model": "nvidia/Nemotron-3_5-Lightning",
-    "prompt_tokens": 821,
-    "completion_tokens": 633,
+    "prompt_tokens": 819,
+    "completion_tokens": 646,
     "reasoning_tokens": 0,
-    "latency_ms": 6184,
-    "cost_usd": 0.0002012,
+    "latency_ms": 4135,
+    "cost_usd": 0.0002042,
     "ok": true,
     "attempt": 1,
     "error": null
@@ -354,7 +354,7 @@
     "prompt_tokens": 800,
     "completion_tokens": 497,
     "reasoning_tokens": 0,
-    "latency_ms": 5667,
+    "latency_ms": 3689,
     "cost_usd": 0.0001673,
     "ok": true,
     "attempt": 1,
@@ -367,7 +367,7 @@
     "prompt_tokens": 848,
     "completion_tokens": 674,
     "reasoning_tokens": 0,
-    "latency_ms": 6172,
+    "latency_ms": 3636,
     "cost_usd": 0.0002126,
     "ok": true,
     "attempt": 1,
@@ -378,10 +378,10 @@
     "role": "reasoning",
     "model": "nvidia/nemotron-3-super-120b-a12b",
     "prompt_tokens": 789,
-    "completion_tokens": 1191,
-    "reasoning_tokens": 741,
-    "latency_ms": 7479,
-    "cost_usd": 0.0013086,
+    "completion_tokens": 890,
+    "reasoning_tokens": 471,
+    "latency_ms": 4722,
+    "cost_usd": 0.0010377,
     "ok": true,
     "attempt": 1,
     "error": null
@@ -389,14 +389,14 @@
   ],
   "pages": {
    "en": "Fictional demo data. Kanaloa County does not exist. The links below use the reserved .example domain and go nowhere.\nHow to vote in Kanaloa County\nOfficial county services are only ever hosted on kanaloacounty.example. If a link takes you anywhere else, it is not from us.\nWhere to vote\nFind your polling place: elections.kanaloacounty.example\nBallot drop boxes (open until 7:00 pm on Election Day)\nKanaloa Civic Center, 100 Harbor Lane, Port Kanaloa\nUpcountry Library, 42 Ridge Road, Makaiwa\nWestside Community Hall, 7 Breakwater Street, Leeward Point\nRegister or check your registration\nRegister to vote or update your address: register.kanaloacounty.example\nKey dates\n| Mail ballots sent | Tuesday, October 13, 2026\n| Voter service centers open | Tuesday, October 20, 2026\n| Election Day | Tuesday, November 3, 2026, 7:00 am to 7:00 pm\n| Certification of results | Tuesday, November 17, 2026\nContact the elections office\nPhone (fictional): (808) 555-0147. The office never asks for your password, Social Security number or payment by phone, text or email.",
-   "vi": "Dữ liệu demo hư cấu. Quận Kanaloa không có thật. Các liên kết dưới đây dùng tên miền dành riêng .example và không dẫn đến đâu cả.\nCách bỏ phiếu tại Quận Kanaloa\nDịch vụ chính thức của quận chỉ được đặt trên kanaloacounty.example. Nếu một liên kết đưa bạn đến nơi khác, đó không phải là của chúng tôi.\nNơi bỏ phiếu\nTìm địa điểm bỏ phiếu của bạn: elections.kanaloa-county.example\nThùng nhận phiếu bầu (mở đến 7:00 tối Ngày Bầu cử)\nKanaloa Civic Center, 100 Harbor Lane, Port Kanaloa\nUpcountry Library, 42 Ridge Road, Makaiwa\nWestside Community Hall, 7 Breakwater Street, Leeward Point\nĐăng ký hoặc kiểm tra đăng ký cử tri\nĐăng ký bỏ phiếu hoặc cập nhật địa chỉ: register.kanaloacounty.example\nCác ngày quan trọng\n| Gửi phiếu bầu qua bưu điện | Thứ Ba, ngày 13 tháng 10 năm 2026\n| Trung tâm dịch vụ cử tri mở cửa | Thứ Ba, ngày 20 tháng 10 năm 2026\n| Ngày Bầu cử | Thứ Ba, ngày 3 tháng 11 năm 2026, từ 7:00 sáng đến 7:00 tối\n| Chứng nhận kết quả | Thứ Ba, ngày 17 tháng 11 năm 2026\nLiên hệ văn phòng bầu cử\nĐiện thoại (hư cấu): (808) 555-0147. Văn phòng không bao giờ hỏi mật khẩu, số An sinh Xã hội hay yêu cầu thanh toán qua điện thoại, tin nhắn hoặc email.",
+   "vi": "Dữ liệu demo hư cấu. Quận Kanaloa không có thật. Các liên kết dưới đây dùng tên miền dành riêng .example và không dẫn đến đâu cả.\nCách bỏ phiếu tại Quận Kanaloa\nDịch vụ chính thức của quận chỉ được đặt trên kanaloacounty.example. Nếu một liên kết đưa bạn đến nơi khác, đó không phải là của chúng tôi.\nNơi bỏ phiếu\nTìm địa điểm bỏ phiếu của bạn: elections.kanaloa-county.example\nThùng bỏ phiếu (mở đến 7:00 tối Ngày Bầu cử)\nKanaloa Civic Center, 100 Harbor Lane, Port Kanaloa\nUpcountry Library, 42 Ridge Road, Makaiwa\nWestside Community Hall, 7 Breakwater Street, Leeward Point\nĐăng ký hoặc kiểm tra đăng ký cử tri\nĐăng ký bỏ phiếu hoặc cập nhật địa chỉ: register.kanaloacounty.example\nCác ngày quan trọng\n| Phiếu bầu được gửi qua thư từ | Thứ Ba, ngày 13 tháng 10 năm 2026\n| Trung tâm dịch vụ cử tri mở cửa | Thứ Ba, ngày 20 tháng 10 năm 2026\n| Ngày Bầu cử | Thứ Ba, ngày 3 tháng 11 năm 2026, từ 7:00 sáng đến 7:00 tối\n| Chứng nhận kết quả | Thứ Ba, ngày 17 tháng 11 năm 2026\nLiên hệ văn phòng bầu cử\nĐiện thoại (hư cấu): (808) 555-0147. Văn phòng không bao giờ hỏi mật khẩu, số An sinh Xã hội hay yêu cầu thanh toán qua điện thoại, tin nhắn hoặc email.",
    "es": "Datos de demostración ficticios. El Condado de Kanaloa no existe. Los enlaces usan el dominio reservado .example y no llevan a ninguna parte.\nCómo votar en el Condado de Kanaloa\nLos servicios oficiales del condado solo se publican en kanaloacounty.example. Si un enlace lo lleva a otro sitio, no es nuestro.\nDónde votar\nEncuentre su lugar de votación: elections.kanaloacounty.example\nBuzones para boletas (abiertos hasta las 7:00 p. m. el día de las elecciones)\nKanaloa Civic Center, 100 Harbor Lane, Port Kanaloa\nUpcountry Library, 42 Ridge Road, Makaiwa\nWestside Community Hall, 7 Breakwater Street, Leeward Point\nInscríbase o verifique su inscripción\nInscríbase para votar o actualice su dirección: register.kanaloacounty.example\nFechas importantes\n| Envío de boletas por correo | martes, 13 de octubre de 2026\n| Apertura de los centros de servicio al votante | martes, 20 de octubre de 2026\n| Día de las elecciones | martes, 3 de noviembre de 2026, de 7:00 a. m. a 6:00 p. m.\n| Certificación de resultados | martes, 17 de noviembre de 2026\nComuníquese con la oficina electoral\nTeléfono (ficticio): (808) 555-0147. La oficina nunca le pedirá su contraseña, su número de Seguro Social ni pagos por teléfono, mensaje de texto o correo electrónico.",
    "tl": "Kathang-isip na demo data. Hindi totoo ang Kanaloa County. Ang mga link sa ibaba ay gumagamit ng nakareserbang .example domain at walang pinupuntahan.\nPaano bumoto sa Kanaloa County\nAng mga opisyal na serbisyo ng county ay nasa kanaloacounty.example lamang. Kung dadalhin ka ng link sa ibang lugar, hindi ito galing sa amin.\nSaan boboto\nHanapin ang iyong lugar ng botohan: elections.kanaloacounty.example\nMga ballot drop box (bukas hanggang 7:00 ng gabi sa Araw ng Halalan)\nKanaloa Civic Center, 100 Harbor Lane, Port Kanaloa\nUpcountry Library, 42 Ridge Road, Makaiwa\nWestside Community Hall, 7 Breakwater Street, Leeward Point\nMagparehistro o tingnan ang iyong rehistro\nMagparehistro para bumoto o i-update ang iyong address: register.kanaloacounty.example\nMahahalagang petsa\n| Pagpapadala ng mga mail ballot | Martes, Oktubre 13, 2026\n| Pagbubukas ng mga voter service center | Martes, Oktubre 20, 2026\n| Araw ng Halalan | Martes, Nobyembre 4, 2026, 7:00 ng umaga hanggang 7:00 ng gabi\n| Sertipikasyon ng mga resulta | Martes, Nobyembre 17, 2026\nMakipag-ugnayan sa tanggapan ng halalan\nTelepono (kathang-isip): (808) 555-0147. Hindi kailanman hihingin ng tanggapan ang iyong password, Social Security number o bayad sa telepono, text o email."
   },
   "totals": {
-   "cost_usd": 0.002076,
-   "prompt_tokens": 3981,
-   "completion_tokens": 3592,
+   "cost_usd": 0.001808,
+   "prompt_tokens": 3979,
+   "completion_tokens": 3304,
    "model_calls": 5,
    "tavily_calls": 0
   }

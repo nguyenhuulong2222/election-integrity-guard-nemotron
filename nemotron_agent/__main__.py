@@ -101,6 +101,8 @@ def cmd_triage(args) -> int:
         print(f"Nemotron verdict error: {out['triage_error']}")
     d = out["decision"]
     print(f"Gate decision: {d['action']}  ({d['reason']})")
+    for r in out["risk_signals"]:
+        print(f"  risk signal for the official: {r['id']} {r['title']} ({r['detail']})")
     if out["incident_report_md"]:
         print("\n" + out["incident_report_md"] + "\n")
     print("Model calls:")

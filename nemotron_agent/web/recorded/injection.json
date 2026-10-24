@@ -243,7 +243,20 @@
    "completion_tokens": 2545,
    "model_calls": 3,
    "tavily_calls": 0
-  }
+  },
+  "risk_signals": [
+   {
+    "id": "RISK-HOURS",
+    "title": "Change made off-hours",
+    "detail": "submitted at 01:47 local time (2026-11-04T01:47:30-10:00); window 00:00-05:00"
+   },
+   {
+    "id": "RISK-SCOPE",
+    "title": "Diff is much larger than the ticket describes",
+    "detail": "largest count change is 400; the largest figure the ticket supports is 2"
+   }
+  ]
  },
- "error": null
+ "error": null,
+ "note": "risk_signals added afterwards from seal + metadata (deterministic; no model output changed)"
 }

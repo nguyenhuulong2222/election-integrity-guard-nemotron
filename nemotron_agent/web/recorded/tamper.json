@@ -249,7 +249,25 @@
    "completion_tokens": 3278,
    "model_calls": 3,
    "tavily_calls": 0
-  }
+  },
+  "risk_signals": [
+   {
+    "id": "RISK-ACTOR",
+    "title": "Change made by a service account or unknown actor",
+    "detail": "submitted_by: 'web-deploy-svc', role: 'service account (site hosting)', channel: 'direct file upload (SFTP), bypassing the results portal'"
+   },
+   {
+    "id": "RISK-HOURS",
+    "title": "Change made off-hours",
+    "detail": "submitted at 03:12 local time (2026-11-04T03:12:09-10:00); window 00:00-05:00"
+   },
+   {
+    "id": "RISK-SCOPE",
+    "title": "Ticket gives no figures, but counts changed",
+    "detail": "largest count change is 1,632; the ticket text quotes no numbers"
+   }
+  ]
  },
- "error": null
+ "error": null,
+ "note": "risk_signals added afterwards from seal + metadata (deterministic; no model output changed)"
 }

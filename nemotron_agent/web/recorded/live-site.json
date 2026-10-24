@@ -51,7 +51,9 @@
    "completion_tokens": 0,
    "model_calls": 0,
    "tavily_calls": 0
-  }
+  },
+  "risk_signals": []
  },
- "error": null
+ "error": null,
+ "note": "risk_signals added afterwards from seal + metadata (deterministic; no model output changed)"
 }
