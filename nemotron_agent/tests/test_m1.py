@@ -116,6 +116,22 @@ class GateTest(unittest.TestCase):
         self.assertEqual(out["decision"]["action"], "ROLLBACK")
 
 
+class FrozenPromptTest(unittest.TestCase):
+    def test_triage_prompt_is_frozen_for_the_heldout_set(self):
+        # See fixtures/heldout/README.md. Changing the prompt invalidates the held-out results.
+        import hashlib
+        self.assertEqual(hashlib.sha256(triage.TRIAGE_SYSTEM.encode()).hexdigest(),
+                         "588f117b4a2d2f8ecfe90b1944ab2387e7f7270570fa24fa7d4f8f85c1b564d7")
+
+    def test_heldout_cases_apply(self):
+        heldout = os.path.join(os.path.dirname(CASES), "heldout")
+        names = [n for n in sorted(os.listdir(heldout)) if n.endswith(".json")]
+        self.assertGreaterEqual(len(names), 6)
+        for name in names:
+            case = load_case(os.path.join(heldout, name))
+            self.assertFalse(compare(CERT, case_live_bytes(case, CERT))["match"], name)
+
+
 class ParsingTest(unittest.TestCase):
     def test_parse_tolerates_fences_and_think(self):
         self.assertEqual(parse_json('<think>hm</think>\n```json\n{"a": 1}\n```'), {"a": 1})
