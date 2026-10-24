@@ -14,7 +14,8 @@ happened. Source material for the feedback section of DEVPOST.md.
 2. **How to turn reasoning off is not discoverable.** Every Nemotron model lists
    `supported_features: ["tools", "reasoning"]`, but nothing says how to control it.
    `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` works on all four text
-   models (completion dropped from 252 to 8 tokens on a trivial prompt with Lightning).
+   models (on the same trivial prompt, Lightning used 8 completion tokens with it versus 152 with
+   `reasoning_effort="low"`).
    `reasoning_effort="low"` is accepted but behaves differently per model: Lightning still
    produced about 450 characters of reasoning, Ultra produced none.
 3. **Reasoning tokens count against `max_tokens`.** Lightning spent 227 reasoning tokens to
