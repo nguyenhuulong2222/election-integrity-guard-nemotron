@@ -1,0 +1,23 @@
+# Render Blueprint for the Nemotron Integrity Agent demo.
+# Spec: https://render.com/docs/blueprint-spec  Python version: https://render.com/docs/python-version
+services:
+  - type: web
+    name: eig-nemotron
+    runtime: python
+    plan: free
+    branch: nebius-nemotron
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m nemotron_agent serve
+    healthCheckPath: /healthz
+    autoDeployTrigger: commit
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7          # same minor version as the GitLab CI image (python:3.12-slim)
+      - key: NEBIUS_API_KEY
+        sync: false            # secret: entered once in the Render dashboard, never in the repo
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: EIG_DAILY_LIVE_CAP
+        value: "60"            # live scenario runs per day, all visitors together
+      - key: EIG_IP_HOURLY_CAP
+        value: "6"             # live scenario runs per visitor IP per hour
