@@ -1,0 +1,128 @@
+{
+ "id": "recorded-correction",
+ "scenario": "correction",
+ "live": false,
+ "status": "done",
+ "recorded_at": "2026-10-24T20:03:03+00:00",
+ "started_at": 1792872171.435751,
+ "finished_at": 1792872183.573051,
+ "steps": {
+  "seal": {
+   "started_at": 1792872171.4365141,
+   "status": "done",
+   "detail": "mismatch: 2 fields changed, 1 rule findings",
+   "finished_at": 1792872171.436857
+  },
+  "triage": {
+   "started_at": 1792872171.4368582,
+   "status": "done",
+   "detail": "legitimate 0.88",
+   "finished_at": 1792872183.5728042
+  },
+  "gate": {
+   "started_at": 1792872183.572813,
+   "status": "done",
+   "detail": "HUMAN_SIGNOFF",
+   "finished_at": 1792872183.572813
+  }
+ },
+ "result": {
+  "seal": {
+   "certified_sha256": "3f41b2b5d35549ee5129109b9561e7da4730f755a5f7acb4d6e26cedae212009",
+   "live_sha256": "e9aca32ffef4ce17d576153ac5561f929b5b4cf78de79af486f7d695ba9733aa",
+   "match": false,
+   "diff": [
+    {
+     "path": "contests[id=mayor].total_votes",
+     "certified": 33630,
+     "live": 33603,
+     "kind": "changed"
+    },
+    {
+     "path": "contests[id=mayor].candidates[1].votes",
+     "certified": 14752,
+     "live": 14725,
+     "kind": "changed"
+    }
+   ],
+   "findings": [
+    {
+     "rule_id": "ANOM-002",
+     "severity": "WARN",
+     "category": "results-anomaly",
+     "title": "Vote count went down in contest 'mayor'",
+     "detail": "'Dana Ironwood': 14,752 → 14,725 since the certified copy. Counts normally only grow during election night.",
+     "file": "live/results.json",
+     "suggestion": "If this is a correction, explain it in the MR and link the correction record."
+    }
+   ],
+   "blocking": false
+  },
+  "triage": {
+   "verdict": "legitimate",
+   "confidence": 0.88,
+   "evidence": [
+    {
+     "change": "contests[id=mayor].total_votes",
+     "observation": "decreased from 33630 to 33603 (-27)",
+     "points_to": "legitimate"
+    },
+    {
+     "change": "contests[id=mayor].candidates[1].votes",
+     "observation": "decreased from 14752 to 14725 (-27)",
+     "points_to": "legitimate"
+    }
+   ],
+   "recommended_action": "human_review",
+   "summary": "The live results show a 27‑vote reduction for Dana Ironwood in the mayor contest, matching the cited precinct‑17 audit correction; total votes changed accordingly as a derived sum."
+  },
+  "triage_error": null,
+  "decision": {
+   "action": "HUMAN_SIGNOFF",
+   "reason": "Nemotron judged the change legitimate; an official must sign off and re-seal."
+  },
+  "incident_report_md": null,
+  "calls": [
+   {
+    "task": "tamper_triage",
+    "role": "reasoning",
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "prompt_tokens": 1146,
+    "completion_tokens": 1255,
+    "reasoning_tokens": 1074,
+    "latency_ms": 12010,
+    "cost_usd": 0.0014733,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   }
+  ],
+  "case": {
+   "id": "T04",
+   "title": "Documented canvass correction (transposed digits)",
+   "expected": "legitimate",
+   "metadata": {
+    "change_id": "chg-7802",
+    "submitted_by": "m.alvarez",
+    "role": "results supervisor",
+    "channel": "results portal (two-person approval)",
+    "submitted_at": "2026-11-05T10:20:00-10:00",
+    "ticket": "CORR-2026-102",
+    "ticket_text": "Precinct 17 hand-count audit: Dana Ironwood tally sheet read 271, correct value 244 (transposed digits). Mayor contest only. Approved by the Canvass Board on 2026-11-05.",
+    "approvals": [
+     "m.alvarez",
+     "r.chen (Canvass Board chair)"
+    ],
+    "commit_message": "P17 audit correction, Mayor (CORR-2026-102)"
+   }
+  },
+  "totals": {
+   "cost_usd": 0.001473,
+   "prompt_tokens": 1146,
+   "completion_tokens": 1255,
+   "model_calls": 1,
+   "tavily_calls": 0
+  }
+ },
+ "error": null
+}

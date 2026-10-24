@@ -38,6 +38,10 @@ def load_env(path: str = os.path.join(ROOT, ".env")) -> None:
             os.environ.setdefault(key, value.strip().strip('"').strip("'"))
 
 
+def no_progress(step: str, status: str, detail: str = "") -> None:
+    """Default progress callback. The web demo passes one that records each pipeline step."""
+
+
 class LLMError(RuntimeError):
     """A model call failed or never produced valid JSON. `calls` keeps the usage of every attempt."""
 

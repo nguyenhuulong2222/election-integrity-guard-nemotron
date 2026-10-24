@@ -1,0 +1,57 @@
+{
+ "id": "recorded-live-site",
+ "scenario": "live-site",
+ "live": false,
+ "status": "done",
+ "recorded_at": "2026-10-24T20:02:43+00:00",
+ "started_at": 1792872162.985409,
+ "finished_at": 1792872163.630827,
+ "steps": {
+  "seal": {
+   "started_at": 1792872163.6306958,
+   "status": "done",
+   "detail": "match",
+   "finished_at": 1792872163.63075
+  },
+  "gate": {
+   "started_at": 1792872163.6307578,
+   "status": "done",
+   "detail": "NONE",
+   "finished_at": 1792872163.630759
+  }
+ },
+ "result": {
+  "seal": {
+   "certified_sha256": "3f41b2b5d35549ee5129109b9561e7da4730f755a5f7acb4d6e26cedae212009",
+   "live_sha256": "3f41b2b5d35549ee5129109b9561e7da4730f755a5f7acb4d6e26cedae212009",
+   "match": true,
+   "diff": [],
+   "findings": [],
+   "blocking": false
+  },
+  "triage": null,
+  "triage_error": null,
+  "decision": {
+   "action": "NONE",
+   "reason": "Live results match the certified seal."
+  },
+  "incident_report_md": null,
+  "calls": [],
+  "case": {
+   "id": "LIVE",
+   "title": "Results served right now by the official demo site",
+   "expected": null,
+   "metadata": {
+    "source": "https://showcase-0b6166.gitlab.io/data/results.json"
+   }
+  },
+  "totals": {
+   "cost_usd": 0,
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "model_calls": 0,
+   "tavily_calls": 0
+  }
+ },
+ "error": null
+}

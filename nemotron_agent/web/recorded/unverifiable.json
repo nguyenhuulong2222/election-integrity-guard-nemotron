@@ -1,0 +1,139 @@
+{
+ "id": "recorded-unverifiable",
+ "scenario": "unverifiable",
+ "live": false,
+ "status": "done",
+ "recorded_at": "2026-10-24T20:03:45+00:00",
+ "started_at": 1792872214.1091342,
+ "finished_at": 1792872225.8298628,
+ "steps": {
+  "seal": {
+   "started_at": 1792872214.110307,
+   "status": "done",
+   "detail": "mismatch: 4 fields changed, 0 rule findings",
+   "finished_at": 1792872214.110538
+  },
+  "triage": {
+   "started_at": 1792872214.110538,
+   "status": "done",
+   "detail": "uncertain 0.55",
+   "finished_at": 1792872225.829797
+  },
+  "gate": {
+   "started_at": 1792872225.829802,
+   "status": "done",
+   "detail": "ESCALATE",
+   "finished_at": 1792872225.829803
+  }
+ },
+ "result": {
+  "seal": {
+   "certified_sha256": "3f41b2b5d35549ee5129109b9561e7da4730f755a5f7acb4d6e26cedae212009",
+   "live_sha256": "a21092e87bfa780806e05f37610c90a9aaf33d096769eedddbcaf0e5d4d15379",
+   "match": false,
+   "diff": [
+    {
+     "path": "turnout.ballots_cast",
+     "certified": 34502,
+     "live": 34542,
+     "kind": "changed"
+    },
+    {
+     "path": "turnout.turnout_percent",
+     "certified": 71.57,
+     "live": 71.65,
+     "kind": "changed"
+    },
+    {
+     "path": "contests[id=mayor].total_votes",
+     "certified": 33630,
+     "live": 33670,
+     "kind": "changed"
+    },
+    {
+     "path": "contests[id=mayor].candidates[1].votes",
+     "certified": 14752,
+     "live": 14792,
+     "kind": "changed"
+    }
+   ],
+   "findings": [],
+   "blocking": false
+  },
+  "triage": {
+   "verdict": "uncertain",
+   "confidence": 0.55,
+   "evidence": [
+    {
+     "change": "turnout.ballots_cast increased from 34502 to 34542 (+40)",
+     "observation": "matches increase in mayor.total_votes (+40) and mayor.candidates[1].votes (+40)",
+     "points_to": "legitimate"
+    },
+    {
+     "change": "All extra votes went to a single candidate (candidate index 1)",
+     "observation": "No change shown for other candidates or other contests",
+     "points_to": "tampering"
+    },
+    {
+     "change": "Metadata cites ticket CORR-2026-109 but ticket system did not respond; approvals list only submitter",
+     "observation": "Cannot verify ticket contents or proper authorization",
+     "points_to": "tampering"
+    },
+    {
+     "change": "Deterministic findings empty (no arithmetic violations)",
+     "observation": "Internally consistent totals",
+     "points_to": "legitimate"
+    }
+   ],
+   "recommended_action": "escalate_to_human",
+   "summary": "The change is internally consistent but shows suspicious uniform shift to one candidate and lacks verifiable ticket approval, warranting human review."
+  },
+  "triage_error": null,
+  "decision": {
+   "action": "ESCALATE",
+   "reason": "Nemotron verdict 'uncertain' at 0.55 confidence is not enough to act alone."
+  },
+  "incident_report_md": null,
+  "calls": [
+   {
+    "task": "tamper_triage",
+    "role": "reasoning",
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "prompt_tokens": 1055,
+    "completion_tokens": 1324,
+    "reasoning_tokens": 1057,
+    "latency_ms": 11717,
+    "cost_usd": 0.0015081,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   }
+  ],
+  "case": {
+   "id": "T07",
+   "title": "Small consistent addition with a ticket that cannot be verified",
+   "expected": "uncertain",
+   "metadata": {
+    "change_id": "chg-7790",
+    "submitted_by": "d.santos",
+    "role": "results data clerk",
+    "channel": "results portal",
+    "submitted_at": "2026-11-04T16:40:00-10:00",
+    "ticket": "CORR-2026-109",
+    "ticket_text": "(ticket lookup unavailable: the ticket system did not respond)",
+    "approvals": [
+     "d.santos"
+    ],
+    "commit_message": "late ballots (CORR-2026-109)"
+   }
+  },
+  "totals": {
+   "cost_usd": 0.001508,
+   "prompt_tokens": 1055,
+   "completion_tokens": 1324,
+   "model_calls": 1,
+   "tavily_calls": 0
+  }
+ },
+ "error": null
+}

@@ -22,7 +22,7 @@ from urllib.parse import urlsplit
 from checker.domains import is_allowed, lookalike_of
 
 from . import multilingual, tavily
-from .llm import LLMError, NemotronClient
+from .llm import LLMError, NemotronClient, no_progress
 from .schemas import HUNTER_REPORT, SEARCH_TRIAGE
 
 QUERIES = (
@@ -121,10 +121,12 @@ def gather(queries=QUERIES, watchlist=()) -> tuple:
 
 
 def run(client: Optional[NemotronClient] = None, queries=QUERIES, watchlist=(),
-        certified: Optional[dict] = None, gathered: Optional[tuple] = None) -> dict:
+        certified: Optional[dict] = None, gathered: Optional[tuple] = None, progress=no_progress) -> dict:
     client = client or NemotronClient()
     certified = certified or multilingual.load_certified()
+    progress("tavily", "running", f"{len(queries)} searches, {len(watchlist)} watchlist URLs")
     items, searches, errors = gathered or gather(queries, watchlist)
+    progress("tavily", "done" if items else "error", f"{len(items)} unique results")
     out = {"queries": list(queries), "watchlist": list(watchlist), "searches": searches, "items": [],
            "findings": [], "report_md": None, "errors": list(errors), "calls": []}
     for i, it in enumerate(items):
@@ -135,6 +137,7 @@ def run(client: Optional[NemotronClient] = None, queries=QUERIES, watchlist=(),
         out["errors"].append("Tavily returned no results")
         return out
 
+    progress("triage", "running")
     triage_input = [{"id": it["id"], "url": it["url"], "title": it["title"],
                      "text": it["text"][:MAX_SNIPPET]} for it in items]
     try:
@@ -160,6 +163,9 @@ def run(client: Optional[NemotronClient] = None, queries=QUERIES, watchlist=(),
             it["category"] = "impersonation"
 
     to_check = [it for it in items if it["about_county"] and len(it["text"]) > 200][:MAX_PAGES]
+    progress("triage", "done", f"{sum(it['category'] == 'unrelated' for it in items)} unrelated, "
+                               f"{len(to_check)} pages about the county")
+    progress("extract", "running")
 
     def check(it):
         try:
@@ -187,6 +193,7 @@ def run(client: Optional[NemotronClient] = None, queries=QUERIES, watchlist=(),
                                             "mentions_county", "official", "demo_decoy", "language", "lookalikes",
                                             "contradictions")} for it in items]
     flagged = [it for it in out["items"] if it.get("contradictions") or it.get("lookalikes")]
+    progress("extract", "done", f"{len(flagged)} pages with contradictions or lookalike domains")
     if not flagged:
         out["report_md"] = ("## Summary\nNo page found by search or on the watchlist contradicts the certified "
                             f"calendar or uses a lookalike domain. {len(items)} results were reviewed; "
@@ -202,6 +209,7 @@ def run(client: Optional[NemotronClient] = None, queries=QUERIES, watchlist=(),
         "other_pages": [{"url": it["url"], "category": it["category"]} for it in out["items"]
                         if it not in flagged],
     }
+    progress("report", "running")
     try:
         res = client.complete_json(task="hunter_report", role="reasoning", system=REPORT_SYSTEM,
                                    user="Evidence (JSON):\n" + json.dumps(evidence, indent=1, ensure_ascii=False),
@@ -212,4 +220,5 @@ def run(client: Optional[NemotronClient] = None, queries=QUERIES, watchlist=(),
     except LLMError as exc:
         out["calls"] += exc.calls
         out["errors"].append(f"report: {exc}")
+    progress("report", "done" if out["findings"] or out["report_md"] else "error")
     return out

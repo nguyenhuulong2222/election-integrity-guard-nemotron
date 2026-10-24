@@ -6,6 +6,8 @@
   python -m nemotron_agent multilingual [--scenario consistent|drift]
   python -m nemotron_agent hunt [--watch URL ...]
   python -m nemotron_agent serve [--port 8000]
+  python -m nemotron_agent eval [--repeats N] [--suite triage|drift]
+  python -m nemotron_agent record [SCENARIO ...]   save live runs as the demo's recorded runs
 """
 
 from __future__ import annotations
@@ -161,6 +163,19 @@ def cmd_hunt(args) -> int:
     return 0
 
 
+def cmd_eval(args) -> int:
+    from . import evaluate
+    res = evaluate.main(args.repeats, tuple(args.suite or ("triage", "drift")))
+    print(open(os.path.join(evaluate.OUT_DIR, "RESULTS.md"), encoding="utf-8").read())
+    return 0
+
+
+def cmd_record(args) -> int:
+    from . import demo
+    demo.record(args.scenario)
+    return 0
+
+
 def cmd_serve(args) -> int:
     from .server import serve
     serve(args.port)
@@ -187,8 +202,13 @@ def main(argv=None) -> int:
     h.add_argument("--json", action="store_true")
     v = sub.add_parser("serve", help="demo web server")
     v.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8000")))
+    e = sub.add_parser("eval", help="accuracy, latency and cost per model on the fixtures")
+    e.add_argument("--repeats", type=int, default=1)
+    e.add_argument("--suite", action="append", choices=["triage", "drift"])
+    rec = sub.add_parser("record", help="run demo scenarios live and save them as recorded runs")
+    rec.add_argument("scenario", nargs="*")
     args = parser.parse_args(argv)
-    return {"models": cmd_models, "triage": cmd_triage, "multilingual": cmd_multilingual,
+    return {"models": cmd_models, "eval": cmd_eval, "record": cmd_record, "triage": cmd_triage, "multilingual": cmd_multilingual,
             "hunt": cmd_hunt, "serve": cmd_serve}[args.cmd](args)
 
 

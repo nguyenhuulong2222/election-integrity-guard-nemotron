@@ -19,7 +19,7 @@ from typing import Optional
 
 from checker.domains import lookalike_of
 
-from .llm import LLMError, NemotronClient
+from .llm import LLMError, NemotronClient, no_progress
 from .pages import squash, visible_text
 from .schemas import ELECTION_FACTS, FACT_KEYS, MISMATCH_EXPLANATIONS
 
@@ -181,7 +181,7 @@ def extract(client: NemotronClient, text: str, label: str, model: Optional[str] 
 
 
 def run(pages: dict, client: Optional[NemotronClient] = None, certified: Optional[dict] = None,
-        fast_model: Optional[str] = None, explain: bool = True) -> dict:
+        fast_model: Optional[str] = None, explain: bool = True, progress=no_progress) -> dict:
     client = client or NemotronClient()
     certified = certified or load_certified()
     texts = {lang: visible_text(html) for lang, html in pages.items()}
@@ -195,8 +195,11 @@ def run(pages: dict, client: Optional[NemotronClient] = None, certified: Optiona
         except LLMError as exc:
             return lang, None, exc
 
+    progress("extract", "running", f"{len(texts)} pages in parallel")
     with ThreadPoolExecutor(max_workers=len(texts)) as pool:
         results = list(pool.map(one, texts))
+    progress("extract", "done")
+    progress("compare", "running")
     for lang, res, err in results:
         if err is not None:
             out["errors"].append(f"{lang}: {err}")
@@ -207,7 +210,9 @@ def run(pages: dict, client: Optional[NemotronClient] = None, certified: Optiona
         out["languages"][lang] = res.data
         out["mismatches"] += compare(lang, res.data, texts[lang], certified)
 
+    progress("compare", "done", f"{len(out['mismatches'])} mismatches")
     if explain and out["mismatches"]:
+        progress("explain", "running")
         payload = {"certified_calendar": certified,
                    "mismatches": [{k: m[k] for k in ("id", "kind", "certified", "page", "quote", "lookalike_of") if k in m}
                                   | {"language": LANG_NAMES.get(m["lang"], m["lang"])}
@@ -222,4 +227,5 @@ def run(pages: dict, client: Optional[NemotronClient] = None, certified: Optiona
         except LLMError as exc:
             out["errors"].append(f"explain: {exc}")
             out["calls"] += exc.calls
+        progress("explain", "done" if out["explanations"] is not None else "error")
     return out
