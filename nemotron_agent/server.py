@@ -8,6 +8,7 @@ They carry a noindex meta tag, an X-Robots-Tag header, and robots.txt disallows 
 
 from __future__ import annotations
 
+import ipaddress
 import json
 import os
 import posixpath
@@ -48,6 +49,14 @@ def client_ip(forwarded: str, peer: str, hops: int) -> str:
     if hops <= 0 or len(entries) < hops:
         return peer
     return entries[-hops]
+
+
+def _mask_private(entry: str) -> str:
+    """Show the caller's public addresses; hide internal proxy addresses."""
+    try:
+        return "private" if ipaddress.ip_address(entry).is_private else entry
+    except ValueError:
+        return "not-an-ip"
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -112,8 +121,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(200, {"scenarios": demo.scenario_list(), "routing": demo.routing(),
                                    "limits": {"daily": LIMITS.daily, "per_ip_hourly": LIMITS.per_ip}})
         if path == "/api/whoami":  # the caller's own address as the rate limiter sees it
-            entries = [e for e in self.headers.get("X-Forwarded-For", "").split(",") if e.strip()]
+            entries = [e.strip() for e in self.headers.get("X-Forwarded-For", "").split(",") if e.strip()]
             return self.send_json(200, {"ip": self.client_ip(), "forwarded_entries": len(entries),
+                                        "chain": [_mask_private(e) for e in entries],
                                         "trusted_proxy_hops": TRUSTED_PROXY_HOPS})
         if path.startswith("/api/jobs/"):
             job = JOBS.get(path[len("/api/jobs/"):])
