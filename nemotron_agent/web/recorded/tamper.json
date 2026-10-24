@@ -3,33 +3,33 @@
  "scenario": "tamper",
  "live": false,
  "status": "done",
- "recorded_at": "2026-10-24T20:02:51+00:00",
- "started_at": 1792872163.631764,
- "finished_at": 1792872171.43471,
+ "recorded_at": "2026-10-24T20:26:31+00:00",
+ "started_at": 1792873578.2578099,
+ "finished_at": 1792873591.9154282,
  "steps": {
   "seal": {
-   "started_at": 1792872163.6329322,
+   "started_at": 1792873578.257956,
    "status": "done",
    "detail": "mismatch: 2 fields changed, 1 rule findings",
-   "finished_at": 1792872163.633294
+   "finished_at": 1792873578.2580822
   },
   "triage": {
-   "started_at": 1792872163.6332958,
+   "started_at": 1792873578.258083,
    "status": "done",
-   "detail": "tampering 0.90",
-   "finished_at": 1792872168.585814
+   "detail": "tampering 0.92 · tampering 0.95",
+   "finished_at": 1792873589.0156522
   },
   "gate": {
-   "started_at": 1792872168.585828,
+   "started_at": 1792873589.01568,
    "status": "done",
    "detail": "ROLLBACK",
-   "finished_at": 1792872168.585829
+   "finished_at": 1792873589.015681
   },
   "report": {
-   "started_at": 1792872168.58583,
+   "started_at": 1792873589.015681,
    "status": "done",
    "detail": "",
-   "finished_at": 1792872171.434591
+   "finished_at": 1792873591.9153018
   }
  },
  "result": {
@@ -64,55 +64,152 @@
    ],
    "blocking": false
   },
+  "gate": "v2",
   "triage": {
    "verdict": "tampering",
-   "confidence": 0.9,
+   "confidence": 0.92,
    "evidence": [
     {
      "change": "contests[id=mayor].candidates[0].votes",
-     "observation": "Decreased from 16284 to 14652",
+     "observation": "decreased from 16284 to 14652",
      "points_to": "tampering"
     },
     {
      "change": "contests[id=mayor].candidates[1].votes",
-     "observation": "Increased from 14752 to 16384",
+     "observation": "increased from 14752 to 16384",
      "points_to": "tampering"
     },
     {
      "change": "change_metadata.channel",
-     "observation": "Direct file upload (SFTP) bypassing results portal",
+     "observation": "direct file upload (SFTP), bypassing the results portal",
      "points_to": "tampering"
     },
     {
      "change": "change_metadata.ticket",
-     "observation": "No ticket provided",
+     "observation": "null (no correction ticket cited)",
      "points_to": "tampering"
     },
     {
-     "change": "deterministic_findings[0].title",
+     "change": "deterministic_findings[ANOM-002].title",
      "observation": "Vote count went down in contest 'mayor'",
+     "points_to": "tampering"
+    },
+    {
+     "change": "change_metadata.commit_message",
+     "observation": "\"fix formatting\" unrelated to vote changes",
      "points_to": "tampering"
     }
    ],
    "recommended_action": "rollback_to_certified",
-   "summary": "Votes shifted between mayor candidates with no correction ticket, via unusual channel, indicating tampering."
+   "summary": "Votes were shifted between mayor candidates via an unauthorized SFTP upload with no correction ticket, indicating tampering."
   },
+  "votes": [
+   {
+    "verdict": "tampering",
+    "confidence": 0.92,
+    "evidence": [
+     {
+      "change": "contests[id=mayor].candidates[0].votes",
+      "observation": "decreased from 16284 to 14652",
+      "points_to": "tampering"
+     },
+     {
+      "change": "contests[id=mayor].candidates[1].votes",
+      "observation": "increased from 14752 to 16384",
+      "points_to": "tampering"
+     },
+     {
+      "change": "change_metadata.channel",
+      "observation": "direct file upload (SFTP), bypassing the results portal",
+      "points_to": "tampering"
+     },
+     {
+      "change": "change_metadata.ticket",
+      "observation": "null (no correction ticket cited)",
+      "points_to": "tampering"
+     },
+     {
+      "change": "deterministic_findings[ANOM-002].title",
+      "observation": "Vote count went down in contest 'mayor'",
+      "points_to": "tampering"
+     },
+     {
+      "change": "change_metadata.commit_message",
+      "observation": "\"fix formatting\" unrelated to vote changes",
+      "points_to": "tampering"
+     }
+    ],
+    "recommended_action": "rollback_to_certified",
+    "summary": "Votes were shifted between mayor candidates via an unauthorized SFTP upload with no correction ticket, indicating tampering."
+   },
+   {
+    "verdict": "tampering",
+    "confidence": 0.95,
+    "evidence": [
+     {
+      "change": "contests[id=mayor].candidates[0].votes changed from 16284 to 14652",
+      "observation": "Votes decreased for first candidate while second increased by same amount, preserving total",
+      "points_to": "tampering"
+     },
+     {
+      "change": "contests[id=mayor].candidates[1].votes changed from 14752 to 16384",
+      "observation": "Votes increased for second candidate mirroring the decrease",
+      "points_to": "tampering"
+     },
+     {
+      "change": "deterministic_findings ANOM-002 warning about vote count down in mayor contest",
+      "observation": "Vote count decreased after certification, which normally only grows",
+      "points_to": "tampering"
+     },
+     {
+      "change": "change_metadata.ticket is null",
+      "observation": "No correction ticket cited",
+      "points_to": "tampering"
+     },
+     {
+      "change": "change_metadata.channel is \"direct file upload (SFTP), bypassing the results portal\"",
+      "observation": "Unusual channel used to submit change",
+      "points_to": "tampering"
+     },
+     {
+      "change": "change_metadata.commit_message is \"fix formatting\"",
+      "observation": "Vague message not describing the vote changes",
+      "points_to": "tampering"
+     }
+    ],
+    "recommended_action": "rollback_to_certified",
+    "summary": "The live results show votes shifted between mayoral candidates, changing the winner, with no correction ticket, unusual SFTP upload, and a vote‑count decrease warning—indicating tampering."
+   }
+  ],
   "triage_error": null,
   "decision": {
    "action": "ROLLBACK",
-   "reason": "Seal mismatch and Nemotron verdict 'tampering' at 0.90 confidence (threshold 0.8)."
+   "reason": "Seal mismatch and 2 independent Nemotron verdicts agree on tampering (tampering 0.92, tampering 0.95; threshold 0.8)."
   },
-  "incident_report_md": "## Summary\nA deterministic seal mismatch and an analyst verdict of \"tampering\" (0.90 confidence) flagged unauthorized changes to the live mayoral results in Kanaloa County (fictional demo data). The live results SHA-256 (9b083a562fc61f669acf6155ec24721b27b8750b6434fd428039f00f08431cde) does not match the certified copy (3f41b2b5d35549ee5129109b9561e7da4730f755a5f7acb4d6e26cedae212009). Votes were shifted between the two mayoral candidates via a direct SFTP upload by a service account with no ticket or approvals. The gate recommended a rollback to the certified copy; the duty election official must confirm or reverse that step.\n\n## What changed\n| Field | Certified | Tampered |\n|-------|-----------|----------|\n| contests[id=mayor].candidates[0].votes (Avery Quill) | 16,284 | 14,652 |\n| contests[id=mayor].candidates[1].votes | 14,752 | 16,384 |\n\n## Evidence\n- **Seal mismatch**: Certified SHA-256 `3f41b2b5d35549ee5129109b9561e7da4730f755a5f7acb4d6e26cedae212009` vs. live SHA-256 `9b083a562fc61f669acf6155ec24721b27b8750b6434fd428039f00f08431cde`.\n- **Vote anomalies**: Avery Quill decreased 16,284 → 14,652; opponent increased 14,752 → 16,384 (deterministic rule ANOM-002: \"Vote count went down in contest 'mayor'\").\n- **Change metadata**: Submitted by `web-deploy-svc` via direct SFTP upload bypassing the results portal at 2026-11-04T03:12:09-10:00; commit message \"fix formatting\"; no ticket; no approvals.\n- **Analyst verdict**: \"tampering\" at 0.90 confidence, citing vote shifts, unusual channel, missing ticket, and vote-count decrease.\n- **Gate decision**: ROLLBACK triggered by seal mismatch and verdict exceeding 0.80 threshold.\n\n## Recommended actions\n1. Duty election official confirms rollback of live results to the certified copy.\n2. Preserve the tampered live file and all metadata for chain-of-custody.\n3. Investigate the service account `web-deploy-svc` and SFTP access logs.\n4. Require a correction ticket and portal-based workflow for any future result amendments.\n\n## Next steps for officials\n- Confirm or reverse the recommended rollback immediately.\n- Document the confirmation/reversal with timestamp and official ID.\n- Brief the county clerk and legal counsel on the tampering finding.\n- Schedule a post-incident review of deployment controls and portal enforcement.\n\n## Draft public notice\nOur office detected an unauthorized change to the live mayoral results and has halted publication while we restore the certified totals. No votes were lost; the certified results remain the official record. We will provide an update once the correction is verified.",
+  "incident_report_md": "## Summary\nTampering with published election results was detected for the Kanaloa County mayoral contest. The live results file's SHA-256 hash (9b083a562fc61f669acf6155ec24721b27b8750b6434fd428039f00f08431cde) does not match the certified copy's hash (3f41b2b5d35549ee5129109b9561e7da4730f755a5f7acb4d6e26cedae212009). Two independent analyst verdicts concur with high confidence (0.92 and 0.95) that votes were shifted between candidates via an unauthorized SFTP upload with no correction ticket. The deterministic gate recommended a rollback to the certified copy; the duty election official must confirm or reverse that step. *Note: Kanaloa County is fictional demo data.*\n\n## What changed\n| Field | Certified | Tampered |\n|-------|-----------|----------|\n| contests[id=mayor].candidates[0].votes | 16284 | 14652 |\n| contests[id=mayor].candidates[1].votes | 14752 | 16384 |\n\n## Evidence\n- **Seal mismatch**: Certified SHA-256 `3f41b2b5d35549ee5129109b9561e7da4730f755a5f7acb4d6e26cedae212009` vs. live SHA-256 `9b083a562fc61f669acf6155ec24721b27b8750b6434fd428039f00f08431cde`.\n- **Vote shifts**: Candidate 0 votes decreased by 1,632; Candidate 1 votes increased by 1,632, preserving the total but changing the apparent winner.\n- **Deterministic finding ANOM-002 (WARN)**: Vote count went down in contest 'mayor' after certification; counts normally only grow during election night.\n- **Change metadata**: Submitted by `web-deploy-svc` via direct SFTP upload bypassing the results portal at 2026-11-04T03:12:09-10:00; no correction ticket cited; commit message \"fix formatting\" unrelated to vote changes.\n- **Analyst verdicts (2)**: Both returned `tampering` with confidence ≥0.92, citing the vote shift, missing ticket, unusual channel, misleading commit message, and ANOM-002 warning.\n- **Gate decision**: `ROLLBACK` triggered by seal mismatch and two agreeing tampering verdicts (threshold 0.8).\n\n## Recommended actions\n1. Duty election official confirms the rollback of live results to the certified copy.\n2. Preserve the tampered live file and all metadata for forensic review.\n3. Investigate the `web-deploy-svc` service account and SFTP access logs.\n4. Require a correction ticket and portal-based workflow for any future result amendments.\n\n## Next steps for officials\n- Confirm or reverse the recommended rollback immediately.\n- Document the confirmation/reversal decision with timestamp and official ID.\n- Initiate internal review of deployment pipeline controls and service-account permissions.\n- Prepare a corrected results publication if rollback is confirmed.\n\n## Draft public notice\nAn irregularity was detected in the published mayoral results. We have secured the certified results and are verifying the live data. Voters will be notified promptly of any corrections.",
   "calls": [
    {
-    "task": "tamper_triage",
+    "task": "tamper_triage#1",
     "role": "reasoning",
     "model": "nvidia/nemotron-3-super-120b-a12b",
     "prompt_tokens": 1055,
-    "completion_tokens": 573,
-    "reasoning_tokens": 305,
-    "latency_ms": 4950,
-    "cost_usd": 0.0008322,
+    "completion_tokens": 1017,
+    "reasoning_tokens": 704,
+    "latency_ms": 6293,
+    "cost_usd": 0.0012318,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "tamper_triage#2",
+    "role": "reasoning",
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "prompt_tokens": 1055,
+    "completion_tokens": 1369,
+    "reasoning_tokens": 995,
+    "latency_ms": 10471,
+    "cost_usd": 0.0015486,
     "ok": true,
     "attempt": 1,
     "error": null
@@ -121,11 +218,11 @@
     "task": "incident_report",
     "role": "report",
     "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
-    "prompt_tokens": 1107,
-    "completion_tokens": 878,
+    "prompt_tokens": 1606,
+    "completion_tokens": 892,
     "reasoning_tokens": 0,
-    "latency_ms": 2847,
-    "cost_usd": 0.003741,
+    "latency_ms": 2898,
+    "cost_usd": 0.004282,
     "ok": true,
     "attempt": 1,
     "error": null
@@ -147,10 +244,10 @@
    }
   },
   "totals": {
-   "cost_usd": 0.004573,
-   "prompt_tokens": 2162,
-   "completion_tokens": 1451,
-   "model_calls": 2,
+   "cost_usd": 0.007062,
+   "prompt_tokens": 3716,
+   "completion_tokens": 3278,
+   "model_calls": 3,
    "tavily_calls": 0
   }
  },

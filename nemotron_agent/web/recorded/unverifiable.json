@@ -3,27 +3,27 @@
  "scenario": "unverifiable",
  "live": false,
  "status": "done",
- "recorded_at": "2026-10-24T20:03:45+00:00",
- "started_at": 1792872214.1091342,
- "finished_at": 1792872225.8298628,
+ "recorded_at": "2026-10-24T20:27:06+00:00",
+ "started_at": 1792873615.3334541,
+ "finished_at": 1792873626.911191,
  "steps": {
   "seal": {
-   "started_at": 1792872214.110307,
+   "started_at": 1792873615.334822,
    "status": "done",
    "detail": "mismatch: 4 fields changed, 0 rule findings",
-   "finished_at": 1792872214.110538
+   "finished_at": 1792873615.335275
   },
   "triage": {
-   "started_at": 1792872214.110538,
+   "started_at": 1792873615.335278,
    "status": "done",
-   "detail": "uncertain 0.55",
-   "finished_at": 1792872225.829797
+   "detail": "uncertain 0.60 · uncertain 0.70",
+   "finished_at": 1792873626.911087
   },
   "gate": {
-   "started_at": 1792872225.829802,
+   "started_at": 1792873626.9111,
    "status": "done",
    "detail": "ESCALATE",
-   "finished_at": 1792872225.829803
+   "finished_at": 1792873626.9111009
   }
  },
  "result": {
@@ -60,50 +60,127 @@
    "findings": [],
    "blocking": false
   },
+  "gate": "v2",
   "triage": {
    "verdict": "uncertain",
-   "confidence": 0.55,
+   "confidence": 0.6,
    "evidence": [
     {
-     "change": "turnout.ballots_cast increased from 34502 to 34542 (+40)",
-     "observation": "matches increase in mayor.total_votes (+40) and mayor.candidates[1].votes (+40)",
-     "points_to": "legitimate"
+     "change": "turnout.ballots_cast",
+     "observation": "increased from 34502 to 34542",
+     "points_to": "neutral"
     },
     {
-     "change": "All extra votes went to a single candidate (candidate index 1)",
-     "observation": "No change shown for other candidates or other contests",
-     "points_to": "tampering"
+     "change": "turnout.turnout_percent",
+     "observation": "increased from 71.57 to 71.65",
+     "points_to": "neutral"
     },
     {
-     "change": "Metadata cites ticket CORR-2026-109 but ticket system did not respond; approvals list only submitter",
-     "observation": "Cannot verify ticket contents or proper authorization",
-     "points_to": "tampering"
+     "change": "contests[id=mayor].total_votes",
+     "observation": "increased from 33630 to 33670",
+     "points_to": "neutral"
     },
     {
-     "change": "Deterministic findings empty (no arithmetic violations)",
-     "observation": "Internally consistent totals",
-     "points_to": "legitimate"
+     "change": "contests[id=mayor].candidates[1].votes",
+     "observation": "increased from 14752 to 14792",
+     "points_to": "neutral"
     }
    ],
    "recommended_action": "escalate_to_human",
-   "summary": "The change is internally consistent but shows suspicious uniform shift to one candidate and lacks verifiable ticket approval, warranting human review."
+   "summary": "Live results show 40 extra ballots all for one mayoral candidate, citing a correction ticket that cannot be verified; lacking ticket details or independent approval, legitimacy is unclear."
   },
+  "votes": [
+   {
+    "verdict": "uncertain",
+    "confidence": 0.6,
+    "evidence": [
+     {
+      "change": "turnout.ballots_cast",
+      "observation": "increased from 34502 to 34542",
+      "points_to": "neutral"
+     },
+     {
+      "change": "turnout.turnout_percent",
+      "observation": "increased from 71.57 to 71.65",
+      "points_to": "neutral"
+     },
+     {
+      "change": "contests[id=mayor].total_votes",
+      "observation": "increased from 33630 to 33670",
+      "points_to": "neutral"
+     },
+     {
+      "change": "contests[id=mayor].candidates[1].votes",
+      "observation": "increased from 14752 to 14792",
+      "points_to": "neutral"
+     }
+    ],
+    "recommended_action": "escalate_to_human",
+    "summary": "Live results show 40 extra ballots all for one mayoral candidate, citing a correction ticket that cannot be verified; lacking ticket details or independent approval, legitimacy is unclear."
+   },
+   {
+    "verdict": "uncertain",
+    "confidence": 0.7,
+    "evidence": [
+     {
+      "change": "turnout.ballots_cast",
+      "observation": "increased from 34502 to 34542 (+40)",
+      "points_to": "legitimate"
+     },
+     {
+      "change": "contests[id=mayor].total_votes",
+      "observation": "increased from 33630 to 33670 (+40)",
+      "points_to": "legitimate"
+     },
+     {
+      "change": "contests[id=mayor].candidates[1].votes",
+      "observation": "increased from 14752 to 14792 (+40)",
+      "points_to": "tampering"
+     },
+     {
+      "change": "change_metadata.ticket_text",
+      "observation": "ticket system did not respond; ticket text unavailable",
+      "points_to": "tampering"
+     },
+     {
+      "change": "change_metadata.approvals",
+      "observation": "only submitter d.santos listed as approver",
+      "points_to": "tampering"
+     }
+    ],
+    "recommended_action": "escalate_to_human",
+    "summary": "The changes show a consistent increase of 40 ballots all going to one candidate, but the correction ticket cannot be verified and approvals are self-only, creating mixed signals."
+   }
+  ],
   "triage_error": null,
   "decision": {
    "action": "ESCALATE",
-   "reason": "Nemotron verdict 'uncertain' at 0.55 confidence is not enough to act alone."
+   "reason": "Nemotron verdicts do not agree strongly enough to act (uncertain 0.60, uncertain 0.70)."
   },
   "incident_report_md": null,
   "calls": [
    {
-    "task": "tamper_triage",
+    "task": "tamper_triage#1",
     "role": "reasoning",
     "model": "nvidia/nemotron-3-super-120b-a12b",
     "prompt_tokens": 1055,
-    "completion_tokens": 1324,
-    "reasoning_tokens": 1057,
-    "latency_ms": 11717,
-    "cost_usd": 0.0015081,
+    "completion_tokens": 1534,
+    "reasoning_tokens": 1280,
+    "latency_ms": 8622,
+    "cost_usd": 0.0016971,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "tamper_triage#2",
+    "role": "reasoning",
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "prompt_tokens": 1055,
+    "completion_tokens": 1326,
+    "reasoning_tokens": 1028,
+    "latency_ms": 11570,
+    "cost_usd": 0.0015099,
     "ok": true,
     "attempt": 1,
     "error": null
@@ -128,10 +205,10 @@
    }
   },
   "totals": {
-   "cost_usd": 0.001508,
-   "prompt_tokens": 1055,
-   "completion_tokens": 1324,
-   "model_calls": 1,
+   "cost_usd": 0.003207,
+   "prompt_tokens": 2110,
+   "completion_tokens": 2860,
+   "model_calls": 2,
    "tavily_calls": 0
   }
  },

@@ -81,7 +81,7 @@ def cmd_triage(args) -> int:
         from .seal import read_source
         live_bytes = read_source(args.live)
         meta = json.load(open(args.meta, encoding="utf-8")) if args.meta else {}
-    out = triage.run(certified_bytes, live_bytes, meta, NemotronClient(), report=not args.no_report)
+    out = triage.run(certified_bytes, live_bytes, meta, NemotronClient(), report=not args.no_report, gate=args.gate)
     seal = out["seal"]
     if args.json:
         print(json.dumps({**out, "calls": [c.__dict__ for c in out["calls"]]}, indent=2, ensure_ascii=False))
@@ -90,14 +90,15 @@ def cmd_triage(args) -> int:
           f"live {seal['live_sha256'][:12]}…  ({len(seal['diff'])} changed fields)")
     for f in seal["findings"]:
         print(f"  [{f['severity']}] {f['rule_id']} {f['title']}")
-    if out["triage"]:
-        t = out["triage"]
-        print(f"Nemotron verdict: {t['verdict'].upper()}  confidence {t['confidence']:.2f}  "
+    for i, t in enumerate(out["votes"]):
+        if not t:
+            continue
+        print(f"Nemotron verdict #{i + 1}: {t['verdict'].upper()}  confidence {t['confidence']:.2f}  "
               f"-> {t['recommended_action']}\n  {t['summary']}")
-        for e in t["evidence"]:
+        for e in t["evidence"] if i == 0 else []:
             print(f"  - ({e['points_to']}) {e['change']}: {e['observation']}")
-    elif out["triage_error"]:
-        print(f"Nemotron verdict: none ({out['triage_error']})")
+    if out["triage_error"]:
+        print(f"Nemotron verdict error: {out['triage_error']}")
     d = out["decision"]
     print(f"Gate decision: {d['action']}  ({d['reason']})")
     if out["incident_report_md"]:
@@ -165,7 +166,9 @@ def cmd_hunt(args) -> int:
 
 def cmd_eval(args) -> int:
     from . import evaluate
-    res = evaluate.main(args.repeats, tuple(args.suite or ("triage", "drift")))
+    res = evaluate.main(args.repeats, tuple(args.suite or ("triage", "drift")),
+                        tuple(args.split or ("dev", "heldout", "heldout2")), tuple(args.gate or ("v1",)),
+                        tuple(args.model) if args.model else None)
     print(open(os.path.join(evaluate.OUT_DIR, "RESULTS.md"), encoding="utf-8").read())
     return 0
 
@@ -194,6 +197,7 @@ def main(argv=None) -> int:
     t.add_argument("--meta", help="change metadata JSON (with --live)")
     t.add_argument("--no-report", action="store_true", help="skip the incident report call")
     t.add_argument("--json", action="store_true")
+    t.add_argument("--gate", choices=["v1", "v2"], default=config.GATE)
     m = sub.add_parser("multilingual", help="check en/vi/es/tl pages against the certified calendar")
     m.add_argument("--scenario", default="drift")
     m.add_argument("--json", action="store_true")
@@ -205,6 +209,9 @@ def main(argv=None) -> int:
     e = sub.add_parser("eval", help="accuracy, latency and cost per model on the fixtures")
     e.add_argument("--repeats", type=int, default=1)
     e.add_argument("--suite", action="append", choices=["triage", "drift"])
+    e.add_argument("--split", action="append", choices=["dev", "heldout", "heldout2"])
+    e.add_argument("--gate", action="append", choices=["v1", "v2"])
+    e.add_argument("--model", action="append", help="limit to these model ids")
     rec = sub.add_parser("record", help="run demo scenarios live and save them as recorded runs")
     rec.add_argument("scenario", nargs="*")
     args = parser.parse_args(argv)

@@ -30,6 +30,33 @@ class LimitsTest(unittest.TestCase):
         json.dumps(out)
 
 
+class ClientIpTest(unittest.TestCase):
+    def test_spoofed_leading_entries_are_ignored(self):
+        from nemotron_agent.server import client_ip
+        # Client sent "1.2.3.4"; Render appended the real address it saw.
+        self.assertEqual(client_ip("1.2.3.4, 203.0.113.7", "10.0.0.5", 1), "203.0.113.7")
+        self.assertEqual(client_ip("1.2.3.4, 5.6.7.8, 203.0.113.7", "10.0.0.5", 1), "203.0.113.7")
+
+    def test_two_proxy_hops(self):
+        from nemotron_agent.server import client_ip
+        self.assertEqual(client_ip("1.2.3.4, 203.0.113.7, 10.1.1.1", "10.0.0.5", 2), "203.0.113.7")
+
+    def test_missing_or_short_header_falls_back_to_peer(self):
+        from nemotron_agent.server import client_ip
+        self.assertEqual(client_ip("", "10.0.0.5", 1), "10.0.0.5")
+        self.assertEqual(client_ip("203.0.113.7", "10.0.0.5", 2), "10.0.0.5")
+        self.assertEqual(client_ip("1.2.3.4", "10.0.0.5", 0), "10.0.0.5")
+
+    def test_distinct_visitors_get_distinct_limits(self):
+        from nemotron_agent.server import client_ip
+        lim = demo.Limits(daily=100, per_ip=1)
+        a = client_ip("spoof, 198.51.100.1", "10.0.0.5", 1)
+        b = client_ip("spoof, 198.51.100.2", "10.0.0.5", 1)
+        self.assertIsNone(lim.take(a))
+        self.assertIsNone(lim.take(b))
+        self.assertIsNotNone(lim.take(client_ip("other-spoof, 198.51.100.1", "10.0.0.5", 1)))
+
+
 class ApiTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

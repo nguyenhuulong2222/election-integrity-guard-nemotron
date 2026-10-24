@@ -38,7 +38,7 @@ class FakeTransport:
 class SealTest(unittest.TestCase):
     def test_match_needs_no_model(self):
         fake = FakeTransport()
-        out = triage.run(CERT, CERT, {}, NemotronClient(fake))
+        out = triage.run(CERT, CERT, {}, NemotronClient(fake), gate="v1")
         self.assertTrue(out["seal"]["match"])
         self.assertEqual(out["decision"]["action"], "NONE")
         self.assertEqual(fake.sent, [])
@@ -75,7 +75,7 @@ class GateTest(unittest.TestCase):
 
     def test_tampering_high_confidence_rolls_back_and_reports(self):
         fake = FakeTransport(verdict(), {"incident_report_md": "## Summary\nx"})
-        out = triage.run(CERT, self.live, {}, NemotronClient(fake))
+        out = triage.run(CERT, self.live, {}, NemotronClient(fake), gate="v1")
         self.assertEqual(out["decision"]["action"], "ROLLBACK")
         self.assertEqual(out["incident_report_md"], "## Summary\nx")
         self.assertEqual([s["thinking"] for s in fake.sent], [True, False])
@@ -83,36 +83,36 @@ class GateTest(unittest.TestCase):
 
     def test_low_confidence_tampering_escalates_without_report(self):
         fake = FakeTransport(verdict(conf=0.6))
-        out = triage.run(CERT, self.live, {}, NemotronClient(fake))
+        out = triage.run(CERT, self.live, {}, NemotronClient(fake), gate="v1")
         self.assertEqual(out["decision"]["action"], "ESCALATE")
         self.assertIsNone(out["incident_report_md"])
         self.assertEqual(len(fake.sent), 1)
 
     def test_uncertain_escalates(self):
         fake = FakeTransport(verdict("uncertain", 0.9, "escalate_to_human"))
-        self.assertEqual(triage.run(CERT, self.live, {}, NemotronClient(fake))["decision"]["action"], "ESCALATE")
+        self.assertEqual(triage.run(CERT, self.live, {}, NemotronClient(fake), gate="v1")["decision"]["action"], "ESCALATE")
 
     def test_legitimate_needs_human_signoff(self):
         fake = FakeTransport(verdict("legitimate", 0.95, "human_review"))
-        self.assertEqual(triage.run(CERT, self.live, {}, NemotronClient(fake))["decision"]["action"],
+        self.assertEqual(triage.run(CERT, self.live, {}, NemotronClient(fake), gate="v1")["decision"]["action"],
                          "HUMAN_SIGNOFF")
 
     def test_invalid_json_retries_once_then_escalates(self):
         fake = FakeTransport("not json", {"verdict": "maybe"})
-        out = triage.run(CERT, self.live, {}, NemotronClient(fake))
+        out = triage.run(CERT, self.live, {}, NemotronClient(fake), gate="v1")
         self.assertEqual(len(fake.sent), 2)
         self.assertEqual(out["decision"]["action"], "ESCALATE")
         self.assertIn("no valid JSON", out["triage_error"])
         self.assertEqual(len(out["calls"]), 2)
 
     def test_transport_error_escalates(self):
-        out = triage.run(CERT, self.live, {}, NemotronClient(FakeTransport(TimeoutError("slow"))))
+        out = triage.run(CERT, self.live, {}, NemotronClient(FakeTransport(TimeoutError("slow"))), gate="v1")
         self.assertEqual(out["decision"]["action"], "ESCALATE")
 
     def test_deterministic_block_rolls_back_even_if_model_says_legitimate(self):
         live = case_live_bytes(load_case("t08"), CERT)
         fake = FakeTransport(verdict("legitimate", 0.99, "no_action"), {"incident_report_md": "r"})
-        out = triage.run(CERT, live, {}, NemotronClient(fake))
+        out = triage.run(CERT, live, {}, NemotronClient(fake), gate="v1")
         self.assertEqual(out["decision"]["action"], "ROLLBACK")
 
 
@@ -130,6 +130,40 @@ class FrozenPromptTest(unittest.TestCase):
         for name in names:
             case = load_case(os.path.join(heldout, name))
             self.assertFalse(compare(CERT, case_live_bytes(case, CERT))["match"], name)
+
+
+class GateV2Test(unittest.TestCase):
+    def setUp(self):
+        self.live = case_live_bytes(load_case("t01"), CERT)
+
+    def run_v2(self, *replies):
+        fake = FakeTransport(*replies)
+        return triage.run(CERT, self.live, {}, NemotronClient(fake), gate="v2"), fake
+
+    def test_two_agreeing_tampering_votes_roll_back(self):
+        out, fake = self.run_v2(verdict(conf=0.9), verdict(conf=0.85), {"incident_report_md": "r"})
+        self.assertEqual(out["decision"]["action"], "ROLLBACK")
+        self.assertEqual(len(out["votes"]), 2)
+        self.assertEqual(len(fake.sent), 3)
+
+    def test_disagreement_escalates(self):
+        out, _ = self.run_v2(verdict(conf=0.95), verdict("legitimate", 0.9, "human_review"))
+        self.assertEqual(out["decision"]["action"], "ESCALATE")
+        self.assertIsNone(out["incident_report_md"])
+
+    def test_one_vote_below_threshold_escalates(self):
+        out, _ = self.run_v2(verdict(conf=0.95), verdict(conf=0.7))
+        self.assertEqual(out["decision"]["action"], "ESCALATE")
+
+    def test_both_legitimate_needs_signoff(self):
+        out, _ = self.run_v2(verdict("legitimate", 0.9, "human_review"), verdict("legitimate", 0.8, "human_review"))
+        self.assertEqual(out["decision"]["action"], "HUMAN_SIGNOFF")
+
+    def test_one_invalid_vote_escalates(self):
+        out, fake = self.run_v2(verdict(), "bad", "still bad")
+        self.assertEqual(out["decision"]["action"], "ESCALATE")
+        # Thread interleaving decides which vote gets which reply; every interleaving must escalate.
+        self.assertGreaterEqual(len(fake.sent), 3)
 
 
 class ParsingTest(unittest.TestCase):

@@ -29,9 +29,25 @@ SECURITY_HEADERS = {
                                "img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; "
                                "frame-ancestors 'none'",
 }
+# Render's proxy appends the address it sees to X-Forwarded-For and keeps whatever the client
+# sent before it, so only entries counted from the right are trustworthy. TRUSTED_PROXY_HOPS is
+# the number of trusted proxies in front of this process (checked on Render with /api/whoami).
+TRUSTED_PROXY_HOPS = int(os.environ.get("EIG_TRUSTED_PROXY_HOPS", "1"))
 JOBS = demo.Jobs()
 LIMITS = demo.Limits()
 MAX_BODY = 2048
+
+
+def client_ip(forwarded: str, peer: str, hops: int) -> str:
+    """The visitor's IP for rate limiting: the entry `hops` places from the right of X-Forwarded-For.
+
+    Leading entries are whatever the client chose to send, so they are never used. With no
+    trusted proxy (hops 0) or a header shorter than the proxy chain, fall back to the peer.
+    """
+    entries = [e.strip() for e in forwarded.split(",") if e.strip()]
+    if hops <= 0 or len(entries) < hops:
+        return peer
+    return entries[-hops]
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -65,8 +81,7 @@ class Handler(BaseHTTPRequestHandler):
                   {"Cache-Control": "no-store"})
 
     def client_ip(self) -> str:
-        forwarded = self.headers.get("X-Forwarded-For", "")  # set by Render's proxy
-        return forwarded.split(",")[0].strip() or self.client_address[0]
+        return client_ip(self.headers.get("X-Forwarded-For", ""), self.client_address[0], TRUSTED_PROXY_HOPS)
 
     def do_POST(self):
         if urlsplit(self.path).path != "/api/run":
@@ -96,6 +111,10 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/scenarios":
             return self.send_json(200, {"scenarios": demo.scenario_list(), "routing": demo.routing(),
                                    "limits": {"daily": LIMITS.daily, "per_ip_hourly": LIMITS.per_ip}})
+        if path == "/api/whoami":  # the caller's own address as the rate limiter sees it
+            entries = [e for e in self.headers.get("X-Forwarded-For", "").split(",") if e.strip()]
+            return self.send_json(200, {"ip": self.client_ip(), "forwarded_entries": len(entries),
+                                        "trusted_proxy_hops": TRUSTED_PROXY_HOPS})
         if path.startswith("/api/jobs/"):
             job = JOBS.get(path[len("/api/jobs/"):])
             return self.send_json(200, job) if job else self.send_json(404, {"error": "unknown job"})

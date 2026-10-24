@@ -186,6 +186,11 @@ const ACTION = {
   ROLLBACK: ["bad", "Rollback recommended", "Restore the certified copy and notify the duty official, who confirms or reverses it."],
 };
 const VERDICT_CLASS = { legitimate: "good", tampering: "bad", uncertain: "mid" };
+// One colour for the verdict box: the shared verdict's colour, or amber when the votes disagree.
+function voteClass(votes) {
+  const kinds = new Set(votes.map((v) => (v ? v.verdict : "error")));
+  return kinds.size === 1 ? (VERDICT_CLASS[[...kinds][0]] || "neutral") : "mid";
+}
 
 function renderSeal(r) {
   const nodes = [];
@@ -196,8 +201,8 @@ function renderSeal(r) {
     el("div", { class: "box " + (seal.match ? "good" : "bad") }, el("div", { class: "k" }, "Results Seal"),
       el("div", { class: "v" }, seal.match ? "Match" : "Mismatch"),
       el("div", { class: "note mono" }, "certified " + seal.certified_sha256.slice(0, 12) + "… / live " + seal.live_sha256.slice(0, 12) + "…")),
-    t ? el("div", { class: "box " + (VERDICT_CLASS[t.verdict] || "neutral") }, el("div", { class: "k" }, "Nemotron verdict"),
-      el("div", { class: "v" }, t.verdict + " · " + t.confidence.toFixed(2)),
+    t ? el("div", { class: "box " + voteClass(r.votes || [t]) }, el("div", { class: "k" }, (r.votes || []).length > 1 ? "Nemotron verdicts (independent)" : "Nemotron verdict"),
+      ...(r.votes || [t]).map((v) => el("div", { class: "v" }, v ? v.verdict + " · " + v.confidence.toFixed(2) : "no valid verdict")),
       el("div", { class: "note" }, "model suggests: " + t.recommended_action.replaceAll("_", " "))) :
       el("div", { class: "box neutral" }, el("div", { class: "k" }, "Nemotron verdict"),
         el("div", { class: "v" }, seal.match ? "not called" : "no valid verdict"),

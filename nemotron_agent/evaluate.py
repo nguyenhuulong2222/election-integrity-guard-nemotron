@@ -1,10 +1,14 @@
 """Eval: accuracy, latency and cost per model on the fixture cases.
 
-  python -m nemotron_agent eval [--repeats 2]
+  python -m nemotron_agent eval [--repeats 2] [--suite triage|drift] [--split dev|heldout|heldout2]
+                                [--gate v1|v2] [--model MODEL_ID]
 
 Two suites:
-  triage   tamper triage (dev cases T01-T08 and held-out H01-H07), run on the REASONING role
-           with each candidate model, thinking on. Scored on the verdict label.
+  triage   tamper triage (dev T01-T08, held-out H01-H07, held-out 2 H08-H14), run on the
+           REASONING role with each candidate model, thinking on, through gate v1 (one verdict)
+           and/or v2 (two independent verdicts must agree). Scored on the verdict label (v1) and
+           on the gate decision (both): tampering -> ROLLBACK, legitimate -> HUMAN_SIGNOFF,
+           uncertain -> ESCALATE.
   drift    translation-drift scenarios D1-D7, FAST extraction only (no explanation call),
            with each FAST candidate. Scored on the set of (language, field) mismatches.
 
@@ -27,6 +31,8 @@ from .llm import NemotronClient
 PKG = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(PKG, "eval")
 HELDOUT = os.path.join(os.path.dirname(CASES), "heldout")
+SPLITS = {"dev": CASES, "heldout": HELDOUT, "heldout2": os.path.join(os.path.dirname(CASES), "heldout2")}
+EXPECTED_DECISION = {"tampering": "ROLLBACK", "legitimate": "HUMAN_SIGNOFF", "uncertain": "ESCALATE"}
 TRIAGE_MODELS = (config.SUPER, config.LIGHTNING, config.NANO)
 FAST_MODELS = (config.LIGHTNING, config.NANO)
 WORKERS = 4
@@ -42,17 +48,19 @@ def _usage(calls) -> dict:
             "completion_tokens": sum(c.completion_tokens for c in calls), "calls": len(calls)}
 
 
-def run_triage_case(case: dict, model: str, split: str, repeat: int) -> dict:
+def run_triage_case(case: dict, model: str, split: str, repeat: int, gate: str = "v1") -> dict:
     started = time.monotonic()
     cert = open(CERTIFIED, "rb").read()
     client = NemotronClient(routes={**config.routes(),
                                     "reasoning": config.Route("reasoning", model, 6000, True)})
-    out = triage.run(cert, case_live_bytes(case, cert), case["metadata"], client, report=False)
-    t = out["triage"]
-    got = t["verdict"] if t else "error"
-    return {"suite": "triage", "split": split, "case": case["id"], "model": model, "repeat": repeat,
-            "expected": case["expected"], "got": got, "confidence": t["confidence"] if t else None,
-            "decision": out["decision"]["action"], "correct": got == case["expected"],
+    out = triage.run(cert, case_live_bytes(case, cert), case["metadata"], client, report=False, gate=gate)
+    votes = [(v["verdict"], v["confidence"]) if v else ("error", None) for v in out["votes"]]
+    decision = out["decision"]["action"]
+    return {"suite": "triage", "split": split, "case": case["id"], "model": model, "gate": gate,
+            "repeat": repeat, "expected": case["expected"], "votes": votes,
+            "got": votes[0][0], "confidence": votes[0][1], "correct": votes[0][0] == case["expected"],
+            "decision": decision, "expected_decision": EXPECTED_DECISION[case["expected"]],
+            "decision_correct": decision == EXPECTED_DECISION[case["expected"]],
             "error": out["triage_error"], "wall_ms": int((time.monotonic() - started) * 1000),
             **_usage(out["calls"])}
 
@@ -63,7 +71,7 @@ def run_drift_case(name: str, spec: dict, model: str, repeat: int) -> dict:
     got = sorted({(m["lang"], m["field"]) for m in out["mismatches"]})
     want = sorted({tuple(x) for x in spec["expected"]})
     tp = len(set(got) & set(want))
-    return {"suite": "drift", "split": "eval", "case": spec["eval_id"], "model": model, "repeat": repeat,
+    return {"suite": "drift", "split": "eval", "case": spec["eval_id"], "model": model, "gate": "-", "repeat": repeat,
             "expected": want, "got": got, "tp": tp, "fp": len(got) - tp, "fn": len(want) - tp,
             "correct": got == want, "kinds": sorted({m["kind"] for m in out["mismatches"]}),
             "error": "; ".join(out["errors"]) or None, "wall_ms": int((time.monotonic() - started) * 1000),
@@ -73,10 +81,10 @@ def run_drift_case(name: str, spec: dict, model: str, repeat: int) -> dict:
 def summarize(rows: list) -> list:
     groups = {}
     for r in rows:
-        groups.setdefault((r["suite"], r["split"], r["model"]), []).append(r)
+        groups.setdefault((r["suite"], r["split"], r["model"], r.get("gate", "v1")), []).append(r)
     out = []
-    for (suite, split, model), rs in sorted(groups.items()):
-        row = {"suite": suite, "split": split, "model": model, "runs": len(rs),
+    for (suite, split, model, gate), rs in sorted(groups.items()):
+        row = {"suite": suite, "split": split, "model": model, "gate": gate, "runs": len(rs),
                "cases": len({r["case"] for r in rs}),
                "correct": sum(r["correct"] for r in rs),
                "accuracy": sum(r["correct"] for r in rs) / len(rs),
@@ -86,7 +94,9 @@ def summarize(rows: list) -> list:
         if suite == "triage":
             not_tamper = [r for r in rs if r["expected"] != "tampering"]
             tamper = [r for r in rs if r["expected"] == "tampering"]
-            row.update(false_rollback=sum(r["decision"] == "ROLLBACK" for r in not_tamper),
+            row.update(decision_correct=sum(r.get("decision_correct", False) for r in rs),
+                       escalations=sum(r["decision"] == "ESCALATE" for r in rs),
+                       false_rollback=sum(r["decision"] == "ROLLBACK" for r in not_tamper),
                        not_tamper_runs=len(not_tamper),
                        missed_tamper=sum(r["decision"] == "HUMAN_SIGNOFF" for r in tamper),
                        tamper_runs=len(tamper))
@@ -106,33 +116,43 @@ def to_markdown(summary: list, rows: list, meta: dict) -> str:
              "not a benchmark. Latency is wall-clock per run with 4 runs in flight at once (drift runs its "
              "4 language extractions in parallel); a run that ends in an error still counts as wrong.", "",
              "## Summary", "",
-             "| Suite | Split | Model | Cases | Runs | Correct | Accuracy | Median latency | Mean cost/run |",
-             "|---|---|---|---|---|---|---|---|---|"]
+             "Triage \"verdict accuracy\" scores the first verdict; \"decision correct\" scores what the gate did.",
+             "",
+             "| Suite | Split | Model | Gate | Cases | Runs | Verdict accuracy | Decision correct | Median latency | Mean cost/run |",
+             "|---|---|---|---|---|---|---|---|---|---|"]
     for s in summary:
         extra = f" (P {s['precision']:.2f} / R {s['recall']:.2f})" if s["suite"] == "drift" else ""
-        lines.append(f"| {s['suite']} | {s['split']} | {short(s['model'])} | {s['cases']} | {s['runs']} | "
-                     f"{s['correct']} | {s['accuracy']:.0%}{extra} | {s['median_latency_s']:.1f} s | "
+        dec = f"{s['decision_correct']}/{s['runs']}" if s["suite"] == "triage" else "–"
+        lines.append(f"| {s['suite']} | {s['split']} | {short(s['model'])} | {s['gate']} | {s['cases']} | {s['runs']} | "
+                     f"{s['correct']}/{s['runs']} ({s['accuracy']:.0%}){extra} | {dec} | {s['median_latency_s']:.1f} s | "
                      f"${s['mean_cost_usd']:.5f} |")
     lines += ["", "## Gate outcomes (triage)", "",
               "What the gate did with each verdict. A false rollback replaces live results with the "
               "certified copy and alerts an official; a missed tampering leaves tampered numbers live "
               "until the official's sign-off review.", "",
-              "| Split | Model | False rollbacks (legitimate or uncertain cases) | Tampering sent to sign-off as legitimate |",
-              "|---|---|---|---|"]
+              "| Split | Model | Gate | False rollbacks (legitimate or uncertain cases) | Tampering sent to sign-off as legitimate | Escalations (all runs) |",
+              "|---|---|---|---|---|---|"]
     for s in summary:
         if s["suite"] == "triage":
-            lines.append(f"| {s['split']} | {short(s['model'])} | {s['false_rollback']} of {s['not_tamper_runs']} | "
-                         f"{s['missed_tamper']} of {s['tamper_runs']} |")
-    lines += ["", "## Per case", "", "| Suite | Case | Model | Expected | Got (per repeat) |", "|---|---|---|---|---|"]
+            lines.append(f"| {s['split']} | {short(s['model'])} | {s['gate']} | {s['false_rollback']} of {s['not_tamper_runs']} | "
+                         f"{s['missed_tamper']} of {s['tamper_runs']} | {s['escalations']} of {s['runs']} |")
+    lines += ["", "## Per case", "", "| Suite | Case | Model | Gate | Expected | Got (per repeat) |",
+              "|---|---|---|---|---|---|"]
     per = {}
     for r in rows:
-        per.setdefault((r["suite"], r["case"], r["model"]), []).append(r)
+        per.setdefault((r["suite"], r["case"], r["model"], r.get("gate", "v1")), []).append(r)
     fmt = lambda v: v if isinstance(v, str) else (", ".join(f"{a}:{b}" for a, b in v) or "none")  # noqa: E731
-    for (suite, case, model), rs in sorted(per.items()):
-        got = " / ".join(("✅ " if r["correct"] else "❌ ") + fmt(r["got"]) +
-                         (f" {r['confidence']:.2f}" if r.get("confidence") is not None else "")
-                         for r in sorted(rs, key=lambda r: r["repeat"]))
-        lines.append(f"| {suite} | {case} | {short(model)} | {fmt(rs[0]['expected'])} | {got} |")
+
+    def cell(r):
+        if r["suite"] == "drift":
+            return ("✅ " if r["correct"] else "❌ ") + fmt(r["got"])
+        votes = " + ".join(f"{v} {c:.2f}" if c is not None else v for v, c in r.get("votes", [(r["got"], r["confidence"])]))
+        return ("✅ " if r.get("decision_correct", r["correct"]) else "❌ ") + f"{votes} → {r['decision']}"
+
+    for (suite, case, model, gate), rs in sorted(per.items()):
+        got = " / ".join(cell(r) for r in sorted(rs, key=lambda r: r["repeat"]))
+        exp = fmt(rs[0]["expected"]) + (f" ({rs[0]['expected_decision']})" if suite == "triage" else "")
+        lines.append(f"| {suite} | {case} | {short(model)} | {gate} | {exp} | {got} |")
     return "\n".join(lines) + "\n"
 
 
@@ -144,28 +164,31 @@ def write(result: dict, stamp: str) -> None:
         fh.write(to_markdown(result["summary"], result["rows"], result["meta"]))
 
 
-def main(repeats: int = 1, suites=("triage", "drift")) -> dict:
+def main(repeats: int = 1, suites=("triage", "drift"), splits=("dev", "heldout", "heldout2"),
+         gates=("v1",), models=None) -> dict:
     import hashlib
     jobs = []
     if "triage" in suites:
-        for split, directory in (("dev", CASES), ("heldout", HELDOUT)):
-            for case in _cases(directory):
-                for model in TRIAGE_MODELS:
-                    for rep in range(repeats):
-                        jobs.append(lambda c=case, m=model, s=split, r=rep: run_triage_case(c, m, s, r))
+        for split in splits:
+            for case in _cases(SPLITS[split]):
+                for model in models or TRIAGE_MODELS:
+                    for gate in gates:
+                        for rep in range(repeats):
+                            jobs.append(lambda c=case, m=model, s=split, r=rep, g=gate: run_triage_case(c, m, s, r, g))
     if "drift" in suites:
         with open(os.path.join(multilingual.I18N, "scenarios.json"), encoding="utf-8") as fh:
             scenarios = {k: v for k, v in json.load(fh).items() if not k.startswith("_") and "eval_id" in v}
         for name, spec in scenarios.items():
-            for model in FAST_MODELS:
+            for model in models or FAST_MODELS:
                 for rep in range(repeats):
                     jobs.append(lambda n=name, sp=spec, m=model, r=rep: run_drift_case(n, sp, m, r))
     NemotronClient().transport  # fail fast on a missing key
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
         rows = list(pool.map(lambda job: job(), jobs))
     meta = {"date": dt.date.today().isoformat(), "repeats": repeats, "workers": WORKERS,
+            "suites": list(suites), "splits": list(splits), "gates": list(gates),
             "triage_prompt_sha256": hashlib.sha256(triage.TRIAGE_SYSTEM.encode()).hexdigest(),
             "prices_source": config.PRICES_SOURCE}
     result = {"meta": meta, "summary": summarize(rows), "rows": rows}
-    write(result, dt.datetime.now().strftime("%Y%m%d-%H%M"))
+    write(result, dt.datetime.now().strftime("%Y%m%d-%H%M%S"))
     return result

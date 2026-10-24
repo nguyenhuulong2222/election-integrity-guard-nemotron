@@ -1,0 +1,1263 @@
+{
+ "meta": {
+  "date": "2026-10-24",
+  "repeats": 2,
+  "workers": 4,
+  "suites": [
+   "drift"
+  ],
+  "splits": [
+   "dev",
+   "heldout",
+   "heldout2"
+  ],
+  "gates": [
+   "v1"
+  ],
+  "triage_prompt_sha256": "588f117b4a2d2f8ecfe90b1944ab2387e7f7270570fa24fa7d4f8f85c1b564d7",
+  "prices_source": "GET /v1/models?verbose=true, snapshot 2026-10-24"
+ },
+ "summary": [
+  {
+   "suite": "drift",
+   "split": "eval",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "runs": 14,
+   "cases": 7,
+   "correct": 0,
+   "accuracy": 0.0,
+   "median_latency_s": 6.402,
+   "mean_cost_usd": 0.0008262499999999999,
+   "errors": 0,
+   "tp": 20,
+   "fp": 27,
+   "fn": 0,
+   "precision": 0.425531914893617,
+   "recall": 1.0
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "runs": 14,
+   "cases": 7,
+   "correct": 5,
+   "accuracy": 0.35714285714285715,
+   "median_latency_s": 4.1685,
+   "mean_cost_usd": 0.0007628071428571428,
+   "errors": 0,
+   "tp": 20,
+   "fp": 10,
+   "fn": 0,
+   "precision": 0.6666666666666666,
+   "recall": 1.0
+  }
+ ],
+ "rows": [
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D1",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [],
+   "got": [],
+   "tp": 0,
+   "fp": 0,
+   "fn": 0,
+   "correct": true,
+   "kinds": [],
+   "error": null,
+   "wall_ms": 8713,
+   "latency_ms": 25184,
+   "cost_usd": 0.000766,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2395,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D1",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [],
+   "got": [],
+   "tp": 0,
+   "fp": 0,
+   "fn": 0,
+   "correct": true,
+   "kinds": [],
+   "error": null,
+   "wall_ms": 8540,
+   "latency_ms": 19531,
+   "cost_usd": 0.000766,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2395,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D1",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [],
+   "got": [
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 0,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing"
+   ],
+   "error": null,
+   "wall_ms": 6138,
+   "latency_ms": 23367,
+   "cost_usd": 0.0007956,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2518,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D1",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [],
+   "got": [
+    [
+     "vi",
+     "mail_ballots_sent"
+    ],
+    [
+     "vi",
+     "polls_close"
+    ]
+   ],
+   "tp": 0,
+   "fp": 2,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "unverified"
+   ],
+   "error": null,
+   "wall_ms": 6496,
+   "latency_ms": 23889,
+   "cost_usd": 0.0008155,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2601,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D2",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "es",
+     "polls_close"
+    ],
+    [
+     "tl",
+     "election_day"
+    ],
+    [
+     "vi",
+     "polling_place_site"
+    ]
+   ],
+   "got": [
+    [
+     "es",
+     "election_day"
+    ],
+    [
+     "es",
+     "polls_close"
+    ],
+    [
+     "tl",
+     "election_day"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ],
+    [
+     "vi",
+     "polling_place_site"
+    ]
+   ],
+   "tp": 3,
+   "fp": 2,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 4591,
+   "latency_ms": 15723,
+   "cost_usd": 0.0007941000000000001,
+   "prompt_tokens": 3188,
+   "completion_tokens": 2512,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D2",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "es",
+     "polls_close"
+    ],
+    [
+     "tl",
+     "election_day"
+    ],
+    [
+     "vi",
+     "polling_place_site"
+    ]
+   ],
+   "got": [
+    [
+     "es",
+     "polls_close"
+    ],
+    [
+     "tl",
+     "election_day"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ],
+    [
+     "vi",
+     "polling_place_site"
+    ]
+   ],
+   "tp": 3,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 5093,
+   "latency_ms": 15919,
+   "cost_usd": 0.0007578999999999999,
+   "prompt_tokens": 3188,
+   "completion_tokens": 2361,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D2",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "es",
+     "polls_close"
+    ],
+    [
+     "tl",
+     "election_day"
+    ],
+    [
+     "vi",
+     "polling_place_site"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "registration_site"
+    ],
+    [
+     "es",
+     "polls_close"
+    ],
+    [
+     "tl",
+     "election_day"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ],
+    [
+     "vi",
+     "polling_place_site"
+    ],
+    [
+     "vi",
+     "polls_close"
+    ]
+   ],
+   "tp": 3,
+   "fp": 3,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "unverified",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 7068,
+   "latency_ms": 25351,
+   "cost_usd": 0.0008239,
+   "prompt_tokens": 3188,
+   "completion_tokens": 2636,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D2",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "es",
+     "polls_close"
+    ],
+    [
+     "tl",
+     "election_day"
+    ],
+    [
+     "vi",
+     "polling_place_site"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "registration_site"
+    ],
+    [
+     "es",
+     "polls_close"
+    ],
+    [
+     "tl",
+     "election_day"
+    ],
+    [
+     "vi",
+     "polling_place_site"
+    ]
+   ],
+   "tp": 3,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "unverified",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 6533,
+   "latency_ms": 25188,
+   "cost_usd": 0.000857,
+   "prompt_tokens": 3188,
+   "completion_tokens": 2774,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D3",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "es",
+     "phone"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ]
+   ],
+   "got": [
+    [
+     "es",
+     "phone"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 3921,
+   "latency_ms": 14422,
+   "cost_usd": 0.0007570999999999999,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2358,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D3",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "es",
+     "phone"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ]
+   ],
+   "got": [
+    [
+     "es",
+     "phone"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 3992,
+   "latency_ms": 14212,
+   "cost_usd": 0.0007622,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2379,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D3",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "es",
+     "phone"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "registration_site"
+    ],
+    [
+     "es",
+     "phone"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 2,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "unverified",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 7042,
+   "latency_ms": 24750,
+   "cost_usd": 0.0008157,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2602,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D3",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "es",
+     "phone"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "registration_site"
+    ],
+    [
+     "es",
+     "phone"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 2,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "unverified",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 6988,
+   "latency_ms": 24623,
+   "cost_usd": 0.0008157,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2602,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D4",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "tl",
+     "drop_box_addresses"
+    ],
+    [
+     "vi",
+     "drop_box_close"
+    ]
+   ],
+   "got": [
+    [
+     "tl",
+     "drop_box_addresses"
+    ],
+    [
+     "vi",
+     "drop_box_close"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 4145,
+   "latency_ms": 14154,
+   "cost_usd": 0.0007526,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2339,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D4",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "tl",
+     "drop_box_addresses"
+    ],
+    [
+     "vi",
+     "drop_box_close"
+    ]
+   ],
+   "got": [
+    [
+     "tl",
+     "drop_box_addresses"
+    ],
+    [
+     "vi",
+     "drop_box_close"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 4102,
+   "latency_ms": 14836,
+   "cost_usd": 0.0007574,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2359,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D4",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "tl",
+     "drop_box_addresses"
+    ],
+    [
+     "vi",
+     "drop_box_close"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "registration_site"
+    ],
+    [
+     "tl",
+     "drop_box_addresses"
+    ],
+    [
+     "vi",
+     "drop_box_close"
+    ]
+   ],
+   "tp": 2,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "unverified",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 6275,
+   "latency_ms": 23412,
+   "cost_usd": 0.0008229,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2632,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D4",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "tl",
+     "drop_box_addresses"
+    ],
+    [
+     "vi",
+     "drop_box_close"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "registration_site"
+    ],
+    [
+     "es",
+     "polling_place_site"
+    ],
+    [
+     "tl",
+     "drop_box_addresses"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ],
+    [
+     "vi",
+     "drop_box_close"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 4,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "unverified",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 6308,
+   "latency_ms": 23527,
+   "cost_usd": 0.0008238,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2636,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D5",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [],
+   "got": [],
+   "tp": 0,
+   "fp": 0,
+   "fn": 0,
+   "correct": true,
+   "kinds": [],
+   "error": null,
+   "wall_ms": 4161,
+   "latency_ms": 15011,
+   "cost_usd": 0.0007631000000000001,
+   "prompt_tokens": 3182,
+   "completion_tokens": 2384,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D5",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [],
+   "got": [],
+   "tp": 0,
+   "fp": 0,
+   "fn": 0,
+   "correct": true,
+   "kinds": [],
+   "error": null,
+   "wall_ms": 3985,
+   "latency_ms": 14897,
+   "cost_usd": 0.0007631000000000001,
+   "prompt_tokens": 3182,
+   "completion_tokens": 2384,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D5",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [],
+   "got": [
+    [
+     "vi",
+     "certification_date"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 0,
+   "fp": 2,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "unverified"
+   ],
+   "error": null,
+   "wall_ms": 7264,
+   "latency_ms": 26983,
+   "cost_usd": 0.0008302,
+   "prompt_tokens": 3182,
+   "completion_tokens": 2664,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D5",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [],
+   "got": [
+    [
+     "en",
+     "registration_site"
+    ]
+   ],
+   "tp": 0,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "unverified"
+   ],
+   "error": null,
+   "wall_ms": 7287,
+   "latency_ms": 27654,
+   "cost_usd": 0.0008617,
+   "prompt_tokens": 3182,
+   "completion_tokens": 2795,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D6",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "es",
+     "registration_site"
+    ],
+    [
+     "tl",
+     "service_centers_open"
+    ]
+   ],
+   "got": [
+    [
+     "es",
+     "registration_site"
+    ],
+    [
+     "tl",
+     "service_centers_open"
+    ]
+   ],
+   "tp": 2,
+   "fp": 0,
+   "fn": 0,
+   "correct": true,
+   "kinds": [
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 4176,
+   "latency_ms": 14610,
+   "cost_usd": 0.0007668,
+   "prompt_tokens": 3189,
+   "completion_tokens": 2398,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D6",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "es",
+     "registration_site"
+    ],
+    [
+     "tl",
+     "service_centers_open"
+    ]
+   ],
+   "got": [
+    [
+     "es",
+     "registration_site"
+    ],
+    [
+     "tl",
+     "service_centers_open"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 4081,
+   "latency_ms": 14202,
+   "cost_usd": 0.0007585000000000001,
+   "prompt_tokens": 3189,
+   "completion_tokens": 2363,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D6",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "es",
+     "registration_site"
+    ],
+    [
+     "tl",
+     "service_centers_open"
+    ]
+   ],
+   "got": [
+    [
+     "es",
+     "registration_site"
+    ],
+    [
+     "tl",
+     "service_centers_open"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 6274,
+   "latency_ms": 23558,
+   "cost_usd": 0.0008364000000000001,
+   "prompt_tokens": 3189,
+   "completion_tokens": 2688,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D6",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "es",
+     "registration_site"
+    ],
+    [
+     "tl",
+     "service_centers_open"
+    ]
+   ],
+   "got": [
+    [
+     "es",
+     "registration_site"
+    ],
+    [
+     "tl",
+     "service_centers_open"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 2,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 6284,
+   "latency_ms": 22919,
+   "cost_usd": 0.0008172,
+   "prompt_tokens": 3189,
+   "completion_tokens": 2608,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D7",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "en",
+     "certification_date"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "certification_date"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 1,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 5569,
+   "latency_ms": 15023,
+   "cost_usd": 0.0007571,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2358,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D7",
+   "model": "nvidia/Nemotron-3_5-Lightning",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "en",
+     "certification_date"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "certification_date"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 1,
+   "fp": 1,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 5354,
+   "latency_ms": 16133,
+   "cost_usd": 0.0007574,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2359,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D7",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 0,
+   "expected": [
+    [
+     "en",
+     "certification_date"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "certification_date"
+    ],
+    [
+     "en",
+     "registration_site"
+    ],
+    [
+     "es",
+     "polling_place_site"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 1,
+   "fp": 3,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "unverified",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 6142,
+   "latency_ms": 22932,
+   "cost_usd": 0.0008340999999999999,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2679,
+   "calls": 4
+  },
+  {
+   "suite": "drift",
+   "split": "eval",
+   "case": "D7",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "gate": "-",
+   "repeat": 1,
+   "expected": [
+    [
+     "en",
+     "certification_date"
+    ]
+   ],
+   "got": [
+    [
+     "en",
+     "certification_date"
+    ],
+    [
+     "en",
+     "registration_site"
+    ],
+    [
+     "vi",
+     "certification_date"
+    ],
+    [
+     "vi",
+     "mail_ballots_sent"
+    ]
+   ],
+   "tp": 1,
+   "fp": 3,
+   "fn": 0,
+   "correct": false,
+   "kinds": [
+    "missing",
+    "unverified",
+    "wrong"
+   ],
+   "error": null,
+   "wall_ms": 6117,
+   "latency_ms": 22447,
+   "cost_usd": 0.0008178,
+   "prompt_tokens": 3187,
+   "completion_tokens": 2611,
+   "calls": 4
+  }
+ ]
+}

@@ -64,8 +64,9 @@ TIMEOUT_S = 90.0
 TRANSPORT_RETRIES = 2   # SDK-level retries on timeouts, 429 and 5xx
 JSON_RETRIES = 1        # one extra call if the reply is not valid JSON for the schema
 
-# Gate thresholds (see triage.decide).
+# Gate (see triage.decide / triage.decide_v2).
 TAMPER_CONFIDENCE = 0.8
+GATE = os.environ.get("EIG_GATE", "v2")  # v2: two independent Super verdicts must agree
 
 
 def cost_usd(model: str, prompt_tokens: int, completion_tokens: int) -> float:

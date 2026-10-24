@@ -71,3 +71,23 @@ happened. Source material for the feedback section of DEVPOST.md.
 13. **Super's corrected Tagalog sentence was not fluent.** In one explanation of a missing
    field, Super's suggested Tagalog fix used non-standard words. The Vietnamese and Spanish
    fixes read naturally. The UI labels every suggested fix as "draft for a human translator".
+
+## 2026-10-24 (Milestone 3)
+
+**Nemotron**
+
+14. **Temperature 0 is not deterministic.** The same tamper-triage request to Super gave
+   different verdicts across runs. For example, H01 (a legitimate recount) came back
+   "legitimate 0.85" in one run and "tampering 0.90" in another, and H14 came back
+   "legitimate 0.95" twice under gate v1 and "tampering 0.9x" in all four gate-v2 calls.
+   We report every run and added a two-vote self-consistency gate, but a documented seed or
+   determinism option would make audits of safety-relevant decisions much easier.
+15. **Lightning with reasoning on can run away.** Asked to do tamper triage with reasoning
+   on, Lightning hit our 6,000-token cap in 7 of 30 runs (`finish_reason: length`, no
+   answer). Nano and Super never did. A reasoning-budget parameter separate from
+   `max_tokens` would let us cap thinking without truncating the answer.
+16. **Disguised tampering with an approved-looking ticket is the hard case.** On held-out set
+   2, Super sent 5 of 6 tampering runs to human sign-off as "legitimate" under gate v1 (3
+   of 6 under v2). Case H12 (registered voters cut by a service account at 02:40) was called
+   legitimate in all 6 calls. The model trusts plausible paperwork, which is why every
+   "legitimate" result still needs an official's sign-off in our design.

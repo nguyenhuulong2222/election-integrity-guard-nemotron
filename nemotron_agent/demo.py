@@ -46,8 +46,10 @@ def _steps(feature: str) -> list:
     fast, reasoning, report = _short(r["fast"].model), _short(r["reasoning"].model), _short(r["report"].model)
     if feature == "seal":
         return [("seal", "Results Seal: SHA-256 and checker rules (deterministic)"),
-                ("triage", f"{reasoning}: tamper triage, reasoning on"),
-                ("gate", "Gate decision (code, not the model)"),
+                ("triage", f"{reasoning}: tamper triage, reasoning on"
+                           + (", 2 independent calls" if config.GATE == "v2" else "")),
+                ("gate", "Gate decision (code, not the model)"
+                         + (": both verdicts must agree" if config.GATE == "v2" else "")),
                 ("report", f"{report}: incident report (only after a rollback decision)")]
     if feature == "translations":
         return [("extract", f"{fast}: extract facts from 4 languages in parallel"),

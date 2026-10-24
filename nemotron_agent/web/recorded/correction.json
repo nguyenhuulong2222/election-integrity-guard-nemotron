@@ -3,27 +3,27 @@
  "scenario": "correction",
  "live": false,
  "status": "done",
- "recorded_at": "2026-10-24T20:03:03+00:00",
- "started_at": 1792872171.435751,
- "finished_at": 1792872183.573051,
+ "recorded_at": "2026-10-24T20:26:55+00:00",
+ "started_at": 1792873602.6895292,
+ "finished_at": 1792873615.331653,
  "steps": {
   "seal": {
-   "started_at": 1792872171.4365141,
+   "started_at": 1792873602.6900291,
    "status": "done",
    "detail": "mismatch: 2 fields changed, 1 rule findings",
-   "finished_at": 1792872171.436857
+   "finished_at": 1792873602.690249
   },
   "triage": {
-   "started_at": 1792872171.4368582,
+   "started_at": 1792873602.690251,
    "status": "done",
-   "detail": "legitimate 0.88",
-   "finished_at": 1792872183.5728042
+   "detail": "legitimate 0.90 · legitimate 0.95",
+   "finished_at": 1792873615.3315358
   },
   "gate": {
-   "started_at": 1792872183.572813,
+   "started_at": 1792873615.331551,
    "status": "done",
    "detail": "HUMAN_SIGNOFF",
-   "finished_at": 1792872183.572813
+   "finished_at": 1792873615.331552
   }
  },
  "result": {
@@ -58,40 +58,92 @@
    ],
    "blocking": false
   },
+  "gate": "v2",
   "triage": {
    "verdict": "legitimate",
-   "confidence": 0.88,
+   "confidence": 0.9,
    "evidence": [
     {
      "change": "contests[id=mayor].total_votes",
      "observation": "decreased from 33630 to 33603 (-27)",
-     "points_to": "legitimate"
+     "points_to": "tampering"
     },
     {
      "change": "contests[id=mayor].candidates[1].votes",
      "observation": "decreased from 14752 to 14725 (-27)",
-     "points_to": "legitimate"
+     "points_to": "tampering"
     }
    ],
    "recommended_action": "human_review",
-   "summary": "The live results show a 27‑vote reduction for Dana Ironwood in the mayor contest, matching the cited precinct‑17 audit correction; total votes changed accordingly as a derived sum."
+   "summary": "The live results show a 27‑vote reduction for Dana Ironwood and the mayor total, exactly matching the precinct‑17 hand‑count audit correction (CORR‑2026‑102). No other contests changed, so the update appears legitimate."
   },
+  "votes": [
+   {
+    "verdict": "legitimate",
+    "confidence": 0.9,
+    "evidence": [
+     {
+      "change": "contests[id=mayor].total_votes",
+      "observation": "decreased from 33630 to 33603 (-27)",
+      "points_to": "tampering"
+     },
+     {
+      "change": "contests[id=mayor].candidates[1].votes",
+      "observation": "decreased from 14752 to 14725 (-27)",
+      "points_to": "tampering"
+     }
+    ],
+    "recommended_action": "human_review",
+    "summary": "The live results show a 27‑vote reduction for Dana Ironwood and the mayor total, exactly matching the precinct‑17 hand‑count audit correction (CORR‑2026‑102). No other contests changed, so the update appears legitimate."
+   },
+   {
+    "verdict": "legitimate",
+    "confidence": 0.95,
+    "evidence": [
+     {
+      "change": "contests[id=mayor].total_votes",
+      "observation": "Decreased from 33630 to 33603 (−27)",
+      "points_to": "legitimate"
+     },
+     {
+      "change": "contests[id=mayor].candidates[1].votes",
+      "observation": "Decreased from 14752 to 14725 (−27)",
+      "points_to": "legitimate"
+     }
+    ],
+    "recommended_action": "human_review",
+    "summary": "The live results show a 27‑vote reduction for Dana Ironwood and the mayor total, matching the precinct‑17 audit correction (CORR-2026-102) that fixed a transposed tally. The change follows the documented correction channel and keeps all totals consistent."
+   }
+  ],
   "triage_error": null,
   "decision": {
    "action": "HUMAN_SIGNOFF",
-   "reason": "Nemotron judged the change legitimate; an official must sign off and re-seal."
+   "reason": "Both Nemotron verdicts say legitimate (legitimate 0.90, legitimate 0.95); an official must sign off and re-seal."
   },
   "incident_report_md": null,
   "calls": [
    {
-    "task": "tamper_triage",
+    "task": "tamper_triage#1",
     "role": "reasoning",
     "model": "nvidia/nemotron-3-super-120b-a12b",
     "prompt_tokens": 1146,
-    "completion_tokens": 1255,
-    "reasoning_tokens": 1074,
-    "latency_ms": 12010,
-    "cost_usd": 0.0014733,
+    "completion_tokens": 1650,
+    "reasoning_tokens": 1448,
+    "latency_ms": 12638,
+    "cost_usd": 0.0018288,
+    "ok": true,
+    "attempt": 1,
+    "error": null
+   },
+   {
+    "task": "tamper_triage#2",
+    "role": "reasoning",
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "prompt_tokens": 1146,
+    "completion_tokens": 812,
+    "reasoning_tokens": 608,
+    "latency_ms": 8080,
+    "cost_usd": 0.0010746,
     "ok": true,
     "attempt": 1,
     "error": null
@@ -117,10 +169,10 @@
    }
   },
   "totals": {
-   "cost_usd": 0.001473,
-   "prompt_tokens": 1146,
-   "completion_tokens": 1255,
-   "model_calls": 1,
+   "cost_usd": 0.002903,
+   "prompt_tokens": 2292,
+   "completion_tokens": 2462,
+   "model_calls": 2,
    "tavily_calls": 0
   }
  },
